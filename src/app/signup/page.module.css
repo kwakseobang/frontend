@@ -1,0 +1,65 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 44px 24px 80px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  animation: fadeUp 0.4s var(--ease-standard) both;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  margin-bottom: 36px;
+  margin-left: -6px;
+  display: block;
+}
+
+.title {
+  font: 400 30px/1.4 var(--font-serif);
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font: 13px var(--font-sans);
+  color: var(--color-text-tertiary);
+  margin-bottom: 44px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.submit {
+  margin-top: 38px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 22px;
+  font: 13px var(--font-sans);
+  color: var(--color-text-tertiary);
+}
+
+.footerLink {
+  font-weight: 600;
+}
+
+.error {
+  margin-top: 18px;
+  font: 12px var(--font-sans);
+  color: var(--color-error-text);
+  text-align: center;
+}

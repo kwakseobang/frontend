@@ -1,0 +1,167 @@
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--color-sidebar-bg);
+  border-right: 1px solid var(--color-border-1);
+  display: flex;
+  flex-direction: column;
+  padding: 26px 14px;
+  box-sizing: border-box;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px;
+  margin-bottom: 40px;
+}
+
+.logoDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-brand);
+}
+
+.logoText {
+  font: 400 20px var(--font-serif);
+  color: var(--color-text-primary);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.18s ease;
+}
+
+.navItem:hover {
+  background: rgba(244, 239, 230, 0.05);
+}
+
+.navItem:last-of-type {
+  margin-bottom: 22px;
+}
+
+.navBar {
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.navBar.active {
+  background: var(--color-brand);
+}
+
+.navLabel {
+  font: 600 13px var(--font-sans);
+  color: var(--color-text-secondary);
+}
+
+.navLabel.active {
+  color: var(--color-text-primary);
+}
+
+.newButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border: none;
+  border-radius: 9px;
+  font: 700 13px var(--font-sans);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.newButton:hover {
+  background: var(--color-brand-hover);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-border-1);
+  margin: 0 10px 12px;
+}
+
+.profileRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.profileRow:hover {
+  background: rgba(244, 239, 230, 0.05);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-avatar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 400 15px var(--font-serif);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nickname {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 13px var(--font-sans);
+  color: var(--color-text-quinary);
+}
+
+.logout {
+  padding: 9px 10px;
+  font: 600 12px var(--font-sans);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.18s ease;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.logout:hover {
+  color: var(--color-text-quaternary);
+}

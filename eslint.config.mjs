@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Design handoff reference mockup — not maintained app source, see CLAUDE.md.
+    "design_handoff_memento_web/**",
   ]),
 ]);
 

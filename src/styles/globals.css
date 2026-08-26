@@ -1,0 +1,107 @@
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+::placeholder {
+  color: var(--color-placeholder);
+}
+
+input,
+textarea {
+  outline: none;
+  font-family: inherit;
+  background-color: transparent;
+  color: inherit;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text-primary);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: rotate(-1.5deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-1.5deg) translateY(-10px);
+  }
+}
+
+[role="button"]:focus-visible,
+[role="radio"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.filmstrip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.filmstrip::-webkit-scrollbar-track {
+  background: var(--color-panel-2);
+  border-radius: 3px;
+}
+
+.filmstrip::-webkit-scrollbar-thumb {
+  background: var(--color-border-3);
+  border-radius: 3px;
+}
+
+.filmstrip::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-hover);
+}

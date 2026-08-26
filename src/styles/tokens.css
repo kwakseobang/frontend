@@ -1,0 +1,101 @@
+:root {
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --color-bg: #0a0908;
+  --color-sidebar-bg: #0e0c0b;
+  --color-panel-1: #100e0d;
+  --color-panel-2: #141210;
+  --color-panel-3: #16130f;
+
+  /* Borders */
+  --color-border-1: #1c1916;
+  --color-border-2: #2e2a24;
+  --color-border-3: #332d25;
+
+  /* Text */
+  --color-text-primary: #f4efe6;
+  --color-text-secondary: #8f8778;
+  --color-text-muted: #5c5549;
+  --color-text-tertiary: #6d6558;
+  --color-text-quaternary: #a69d8c;
+  --color-text-quinary: #d4cdc0;
+
+  /* Print (인화지) */
+  --color-print: #f4efe4;
+  --color-print-alt: #e8e0d2;
+  --color-print-text: #332b22;
+
+  /* Brand */
+  --color-brand: #96704f;
+  --color-brand-hover: #a87f5a;
+
+  /* Public badge */
+  --color-public-text: #7d6144;
+  --color-public-bg: rgba(150, 112, 79, 0.16);
+
+  /* Danger */
+  --color-danger: #9c5f52;
+  --color-danger-hover: #af6d5e;
+
+  /* Monospace time labels */
+  --color-mono-1: #9a8256;
+  --color-mono-2: #6d6558;
+
+  /* White (text/icons on solid brand/danger backgrounds) */
+  --color-on-brand: #fff;
+
+  /* Detail screen body text */
+  --color-detail-text: #ece5d8;
+
+  /* Write-screen paper (인화지): ink + date stamp */
+  --color-print-ink: #2f281f;
+  --color-print-stamp: #a8946d;
+
+  /* Small chip background (e.g. image remove button) */
+  --color-chip-bg: #1c1a18;
+
+  /* Inline form error text */
+  --color-error-text: #c07f6e;
+
+  /* Calendar cell hover border */
+  --color-border-hover: #4a3a2a;
+
+  /* Modal border */
+  --color-modal-border: #262119;
+
+  /* Avatar placeholder background */
+  --color-avatar-bg: #2e2820;
+
+  /* Landing polaroid mockup */
+  --gradient-polaroid: linear-gradient(150deg, #e8c79a, #c08b62 48%, #7d5a41);
+  --color-caption: #8b7355;
+
+  /* Links */
+  --color-link: #b08862;
+  --color-link-hover: #c9a67c;
+
+  /* Form placeholder text */
+  --color-placeholder: #8a8172;
+
+  /* Scrollbar */
+  --color-scrollbar-hover: #4a4237;
+
+  /* Muted icon stroke (e.g. delete icon) */
+  --color-icon-muted: #8f7f74;
+
+  /* Fonts */
+  --font-serif: var(--font-gowun-batang), serif;
+  --font-sans: var(--font-noto-sans-kr), sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  /* Spacing / Radius */
+  --radius-print: 3px;
+  --radius-pill: 999px;
+  --sidebar-width: 226px;
+  --content-max-width: 1160px;
+  --card-grid-gap: 24px;
+
+  /* Transitions */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.3, 1);
+}

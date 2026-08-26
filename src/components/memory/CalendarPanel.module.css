@@ -1,0 +1,154 @@
+.wrap {
+  display: flex;
+  gap: 52px;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    flex-direction: column;
+  }
+}
+
+.panel {
+  width: 296px;
+  flex-shrink: 0;
+  background: var(--color-panel-1);
+  border: 1px solid var(--color-border-1);
+  border-radius: 14px;
+  padding: 22px 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .panel {
+    width: 100%;
+  }
+}
+
+.monthLabel {
+  font: 400 18px var(--font-serif);
+  color: var(--color-text-primary);
+  margin-bottom: 18px;
+}
+
+.weekdayRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.weekday {
+  text-align: center;
+  font: 600 10.5px var(--font-sans);
+  color: var(--color-text-muted);
+  padding-bottom: 6px;
+}
+
+.cellGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  box-sizing: border-box;
+  transition: background 0.16s ease;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.cell.clickable {
+  cursor: pointer;
+}
+
+.cell.today {
+  border-color: var(--color-border-hover);
+}
+
+.cell.selected {
+  background: var(--color-brand);
+}
+
+.cell.clickable:hover {
+  background: rgba(150, 112, 79, 0.16);
+}
+
+.cell.selected:hover {
+  background: var(--color-brand-hover);
+}
+
+.cellDay {
+  font: 400 12.5px var(--font-sans);
+  color: var(--color-text-quinary);
+}
+
+.cell.selected .cellDay {
+  font-weight: 700;
+  color: var(--color-on-brand);
+}
+
+.dot {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  opacity: 0;
+}
+
+.cell.selected .dot {
+  background: var(--color-print);
+}
+
+.dot.visible {
+  opacity: 1;
+}
+
+.entries {
+  flex: 1;
+  min-width: 0;
+}
+
+.entriesHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.entriesLabel {
+  font: 400 17px var(--font-serif);
+  color: var(--color-text-quinary);
+}
+
+.hr {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-1);
+}
+
+.empty {
+  font: 14px var(--font-sans);
+  color: var(--color-text-muted);
+  padding: 28px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--card-grid-gap);
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

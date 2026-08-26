@@ -1,0 +1,26 @@
+.wrap {
+  text-align: center;
+  padding: 110px 20px 0;
+}
+
+.silhouette {
+  width: 96px;
+  height: 112px;
+  margin: 0 auto 30px;
+  background: var(--color-panel-2);
+  border: 1px dashed var(--color-border-2);
+  border-radius: var(--radius-print);
+  transform: rotate(-2deg);
+}
+
+.title {
+  font: 400 22px var(--font-serif);
+  color: var(--color-text-quinary);
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font: 14px var(--font-sans);
+  color: var(--color-text-tertiary);
+  margin-bottom: 30px;
+}

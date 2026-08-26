@@ -1,0 +1,62 @@
+.wrap {
+  max-width: 460px;
+  margin: 0 auto;
+  animation: fadeUp 0.34s var(--ease-standard) both;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 38px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin-left: -8px;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  transition: background 0.18s ease;
+}
+
+.backButton:hover {
+  background: rgba(244, 239, 230, 0.07);
+}
+
+.title {
+  font: 400 19px var(--font-serif);
+  color: var(--color-text-primary);
+}
+
+.avatarRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 38px;
+}
+
+.avatarHint {
+  font: 12px var(--font-sans);
+  color: var(--color-text-tertiary);
+}
+
+.label {
+  font: 600 11px var(--font-sans);
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.usernameHint {
+  font: 12px var(--font-mono);
+  color: var(--color-text-muted);
+  margin: 12px 0 0;
+  letter-spacing: 0.04em;
+}
+
+.bioLabel {
+  margin: 34px 0 10px;
+}

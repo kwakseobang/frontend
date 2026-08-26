@@ -1,0 +1,60 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 340px;
+  animation: fadeUp 0.4s var(--ease-standard) both;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.logo {
+  font: 400 38px var(--font-serif);
+  color: var(--color-text-primary);
+}
+
+.tagline {
+  font: 13px var(--font-sans);
+  color: var(--color-text-tertiary);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.submit {
+  margin-top: 38px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 22px;
+  font: 13px var(--font-sans);
+  color: var(--color-text-tertiary);
+}
+
+.footerLink {
+  font-weight: 600;
+}
+
+.error {
+  margin-top: 18px;
+  font: 12px var(--font-sans);
+  color: var(--color-error-text);
+  text-align: center;
+}

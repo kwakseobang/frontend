@@ -1,0 +1,73 @@
+.card {
+  background: var(--color-print);
+  padding: 13px 13px 17px;
+  border-radius: var(--radius-print);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.46);
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--ease-standard),
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: rotate(0deg) translateY(-8px) !important;
+  box-shadow: 0 30px 54px rgba(0, 0, 0, 0.62);
+}
+
+@media (max-width: 560px) {
+  .card {
+    transform: none !important;
+  }
+}
+
+.imageWrap {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 1px;
+  position: relative;
+}
+
+.extraBadge {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  background: rgba(20, 14, 10, 0.62);
+  color: var(--color-on-brand);
+  font: 600 10.5px var(--font-mono);
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.text {
+  font: 15px/1.72 var(--font-serif);
+  color: var(--color-print-text);
+  margin-top: 14px;
+  padding: 0 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-wrap: pretty;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding: 0 2px;
+}
+
+.time {
+  font: 10.5px var(--font-mono);
+  color: var(--color-mono-1);
+  letter-spacing: 0.03em;
+}
+
+.publicBadge {
+  font: 600 10px var(--font-sans);
+  color: var(--color-public-text);
+  background: var(--color-public-bg);
+  padding: 2px 8px;
+  border-radius: 20px;
+}

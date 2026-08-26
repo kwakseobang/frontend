@@ -1,0 +1,40 @@
+.group {
+  margin-bottom: 44px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.dayLabel {
+  font: 400 17px var(--font-serif);
+  color: var(--color-text-quinary);
+}
+
+.hr {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-1);
+}
+
+.grid {
+  display: grid;
+  gap: var(--card-grid-gap);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 479px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

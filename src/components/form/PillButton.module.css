@@ -1,0 +1,49 @@
+.primary {
+  padding: 15px;
+  width: 100%;
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border: none;
+  border-radius: var(--radius-pill);
+  font: 700 14px var(--font-sans);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.18s ease;
+}
+
+.primary:hover {
+  background: var(--color-brand-hover);
+}
+
+.primary:active {
+  transform: scale(0.99);
+}
+
+.compact {
+  padding: 9px 20px;
+  width: auto;
+  font-size: 12.5px;
+}
+
+.large {
+  padding: 15px 38px;
+  width: auto;
+  box-shadow: 0 10px 26px rgba(150, 112, 79, 0.28);
+}
+
+.large:active {
+  transform: scale(0.98);
+}
+
+.outline {
+  background: transparent;
+  border: 1px solid var(--color-border-2);
+  color: var(--color-text-quaternary);
+}
+
+.outline:hover {
+  border-color: var(--color-brand);
+  color: var(--color-text-primary);
+  background: transparent;
+}

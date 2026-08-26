@@ -1,0 +1,26 @@
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 2px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border-2);
+  font: 15px var(--font-sans);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-bottom-color: var(--color-brand);
+}
+
+.serif {
+  font-family: var(--font-serif);
+  line-height: 1.8;
+}
+
+.help {
+  font: 11px var(--font-sans);
+  color: var(--color-text-muted);
+  margin-top: 9px;
+}

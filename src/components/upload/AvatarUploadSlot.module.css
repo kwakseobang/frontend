@@ -1,0 +1,33 @@
+.slot {
+  border-radius: 50%;
+  background: var(--color-avatar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: outline-color 0.18s ease;
+  outline: 2px dashed transparent;
+  outline-offset: 3px;
+}
+
+.slot.dragOver {
+  outline-color: var(--color-brand);
+}
+
+.placeholder {
+  font: 400 15px var(--font-serif);
+  color: var(--color-text-primary);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fileInput {
+  display: none;
+}

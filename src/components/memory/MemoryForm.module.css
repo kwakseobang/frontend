@@ -1,0 +1,145 @@
+.wrap {
+  max-width: 620px;
+  margin: 0 auto;
+  animation: fadeUp 0.34s var(--ease-standard) both;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  margin-left: -8px;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  transition: background 0.18s ease;
+}
+
+.backButton:hover {
+  background: rgba(244, 239, 230, 0.07);
+}
+
+.title {
+  font: 400 19px var(--font-serif);
+  color: var(--color-text-primary);
+}
+
+.paper {
+  background: var(--color-print-alt);
+  padding: 15px 15px 0;
+  border-radius: var(--radius-print);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 220px;
+  background: transparent;
+  border: none;
+  font: 17px/1.9 var(--font-serif);
+  color: var(--color-print-ink);
+  padding: 14px 10px;
+}
+
+.stamp {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font: 11px var(--font-mono);
+  color: var(--color-print-stamp);
+  letter-spacing: 0.05em;
+}
+
+.imageRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 28px 0 0;
+}
+
+.thumb {
+  width: 92px;
+  height: 92px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.removeButton {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 21px;
+  height: 21px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-border-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-quinary);
+  font: 11px sans-serif;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.removeButton:hover {
+  background: var(--color-border-3);
+}
+
+.addSlot {
+  width: 92px;
+  height: 92px;
+  border-radius: 6px;
+  border: 1.5px dashed var(--color-border-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    color 0.18s ease;
+  background: none;
+}
+
+.addSlot:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.metaRow {
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid var(--color-border-1);
+  display: flex;
+  gap: 44px;
+  flex-wrap: wrap;
+}
+
+.metaCol {
+  flex: 1;
+  min-width: 200px;
+}
+
+.metaLabel {
+  font: 600 11px var(--font-sans);
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.error {
+  margin-top: 18px;
+  font: 12px var(--font-sans);
+  color: var(--color-error-text);
+}

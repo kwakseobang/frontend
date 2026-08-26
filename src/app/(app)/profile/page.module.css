@@ -1,0 +1,39 @@
+.wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  animation: fadeUp 0.34s var(--ease-standard) both;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nickname {
+  font: 400 28px var(--font-serif);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.username {
+  font: 12px var(--font-mono);
+  color: var(--color-text-tertiary);
+  margin-top: 7px;
+  letter-spacing: 0.04em;
+}
+
+.bio {
+  font: 16px/1.9 var(--font-serif);
+  color: var(--color-text-quinary);
+  text-wrap: pretty;
+}
