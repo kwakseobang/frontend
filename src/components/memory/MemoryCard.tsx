@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Memory } from "@/types/memory";
 import { formatTime } from "@/lib/date";
 import styles from "./MemoryCard.module.css";
@@ -10,7 +11,7 @@ interface MemoryCardProps {
   onOpen: (id: number) => void;
 }
 
-export function MemoryCard({ memory, rotate, onOpen }: MemoryCardProps) {
+export const MemoryCard = memo(function MemoryCard({ memory, rotate, onOpen }: MemoryCardProps) {
   const rot = rotate === "even" ? "-1.1deg" : "0.9deg";
   const hasImages = memory.images.length > 0;
   const hasExtra = memory.images.length > 1;
@@ -41,4 +42,4 @@ export function MemoryCard({ memory, rotate, onOpen }: MemoryCardProps) {
       </div>
     </div>
   );
-}
+});

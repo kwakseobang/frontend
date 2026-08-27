@@ -7,6 +7,8 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code?: string,
+    public data?: unknown,
   ) {
     super(message);
   }
@@ -70,12 +72,40 @@ function reissue(): Promise<AuthTokens | null> {
   return reissuePromise;
 }
 
-async function parseError(res: Response): Promise<string> {
+// Backend error shape: { error: { status, code, message, data } }. `message` is a
+// generic per-ErrorType string (e.g. "요청 형식이 올바르지 않습니다.") — the actual
+// detail (field validation errors, the raw exception message for 500s, etc.) lives
+// in `data` and was previously dropped on the floor. We fold it into the message so
+// nothing the backend sends is silently hidden from the user.
+function formatErrorData(data: unknown): string | null {
+  if (data === null || data === undefined) return null;
+  if (typeof data === "string") return data;
+  if (typeof data === "object") {
+    const entries = Object.entries(data as Record<string, unknown>);
+    if (entries.length === 0) return null;
+    return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+  }
+  return String(data);
+}
+
+interface ParsedError {
+  message: string;
+  code?: string;
+  data?: unknown;
+}
+
+async function parseError(res: Response): Promise<ParsedError> {
   try {
     const body = await res.json();
-    return body?.error?.message ?? `요청에 실패했습니다 (${res.status})`;
+    const baseMessage: string = body?.error?.message ?? `요청에 실패했습니다 (${res.status})`;
+    const detail = formatErrorData(body?.error?.data);
+    return {
+      message: detail ? `${baseMessage} (${detail})` : baseMessage,
+      code: body?.error?.code,
+      data: body?.error?.data,
+    };
   } catch {
-    return `요청에 실패했습니다 (${res.status})`;
+    return { message: `요청에 실패했습니다 (${res.status})` };
   }
 }
 
@@ -100,7 +130,8 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   }
 
   if (!res.ok) {
-    throw new ApiError(res.status, await parseError(res));
+    const parsed = await parseError(res);
+    throw new ApiError(res.status, parsed.message, parsed.code, parsed.data);
   }
 
   if (res.status === 204) return undefined as T;

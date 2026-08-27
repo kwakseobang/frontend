@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarPanel } from "@/components/memory/CalendarPanel";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
@@ -45,12 +45,16 @@ export default function HomePage() {
     () => (dayQuery.data ?? []).map(toCardMemory).sort((a, b) => b.time.localeCompare(a.time)),
     [dayQuery.data],
   );
-  const entryDates = new Set(datesQuery.data ?? []);
+  const entryDates = useMemo(() => new Set(datesQuery.data ?? []), [datesQuery.data]);
 
-  const isLoading = mode === "list" ? timelineQuery.isLoading : datesQuery.isLoading || dayQuery.isLoading;
+  // Note: dayQuery is deliberately excluded here. Its queryKey includes selectedDate,
+  // so it goes back to "loading" on every date click (no cache for a new date yet) —
+  // gating the whole panel on it would unmount/remount the entire calendar grid each
+  // click. Only the day-entries list inside CalendarPanel should react to dayQuery.
+  const isLoading = mode === "list" ? timelineQuery.isLoading : datesQuery.isLoading;
   const isEmpty = mode === "list" && !isLoading && listMemories.length === 0;
 
-  const openDetail = (id: number) => router.push(`/entry/${id}`);
+  const openDetail = useCallback((id: number) => router.push(`/entry/${id}`), [router]);
 
   return (
     <div className={styles.wrap}>
@@ -87,6 +91,7 @@ export default function HomePage() {
       ) : mode === "calendar" ? (
         <CalendarPanel
           memories={dayMemories}
+          isDayLoading={dayQuery.isLoading}
           entryDates={entryDates}
           year={year}
           month={month - 1}
