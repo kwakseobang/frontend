@@ -26,9 +26,22 @@ interface MemoryFormProps {
   maxImages: number;
   error?: string;
   saving?: boolean;
+  onSaveDraft?: () => void;
+  savingDraft?: boolean;
 }
 
-export function MemoryForm({ title, value, onChange, onBack, onSave, maxImages, error, saving }: MemoryFormProps) {
+export function MemoryForm({
+  title,
+  value,
+  onChange,
+  onBack,
+  onSave,
+  maxImages,
+  error,
+  saving,
+  onSaveDraft,
+  savingDraft,
+}: MemoryFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const canAddImage = value.images.length < maxImages;
 
@@ -50,9 +63,21 @@ export function MemoryForm({ title, value, onChange, onBack, onSave, maxImages, 
           </svg>
         </button>
         <div className={styles.title}>{title}</div>
-        <PillButton variant="compact" onClick={onSave} disabled={saving}>
-          {saving ? "저장 중..." : "저장"}
-        </PillButton>
+        <div className={styles.headerActions}>
+          {onSaveDraft && (
+            <PillButton
+              variant="outline"
+              className={styles.draftButton}
+              onClick={onSaveDraft}
+              disabled={saving || savingDraft}
+            >
+              {savingDraft ? "저장 중..." : "임시저장"}
+            </PillButton>
+          )}
+          <PillButton variant="compact" onClick={onSave} disabled={saving || savingDraft}>
+            {saving ? "저장 중..." : "저장"}
+          </PillButton>
+        </div>
       </div>
 
       <div className={styles.paper}>

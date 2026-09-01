@@ -26,10 +26,38 @@
   }
 }
 
+.monthHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
 .monthLabel {
   font: 400 18px var(--font-serif);
   color: var(--color-text-primary);
-  margin-bottom: 18px;
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-quinary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.monthNav:hover {
+  background: rgba(150, 112, 79, 0.16);
+  color: var(--color-text-primary);
 }
 
 .weekdayRow {

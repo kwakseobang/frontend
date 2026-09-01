@@ -17,6 +17,8 @@ interface CalendarPanelProps {
   selectedDate: string;
   todayIso: string;
   onSelectDate: (iso: string) => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
   onOpen: (id: number) => void;
 }
 
@@ -30,6 +32,8 @@ export function CalendarPanel({
   selectedDate,
   todayIso,
   onSelectDate,
+  onPrevMonth,
+  onNextMonth,
   onOpen,
 }: CalendarPanelProps) {
   return (
@@ -42,6 +46,8 @@ export function CalendarPanel({
         selectedDate={selectedDate}
         todayIso={todayIso}
         onSelectDate={onSelectDate}
+        onPrevMonth={onPrevMonth}
+        onNextMonth={onNextMonth}
       />
       <DayEntries
         selectedDate={selectedDate}
@@ -61,6 +67,8 @@ interface CalendarGridProps {
   selectedDate: string;
   todayIso: string;
   onSelectDate: (iso: string) => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 }
 
 // Memoized so it only recomputes when the month/selection actually changes, not on
@@ -73,6 +81,8 @@ const CalendarGrid = memo(function CalendarGrid({
   selectedDate,
   todayIso,
   onSelectDate,
+  onPrevMonth,
+  onNextMonth,
 }: CalendarGridProps) {
   const cells = useMemo(
     () => buildCalendarCells(year, month, entryDates, selectedDate, todayIso),
@@ -81,7 +91,25 @@ const CalendarGrid = memo(function CalendarGrid({
 
   return (
     <div className={styles.panel}>
-      <div className={styles.monthLabel}>{monthLabel}</div>
+      <div className={styles.monthHeader}>
+        <button
+          type="button"
+          className={styles.monthNav}
+          aria-label="이전 달"
+          onClick={onPrevMonth}
+        >
+          ‹
+        </button>
+        <div className={styles.monthLabel}>{monthLabel}</div>
+        <button
+          type="button"
+          className={styles.monthNav}
+          aria-label="다음 달"
+          onClick={onNextMonth}
+        >
+          ›
+        </button>
+      </div>
       <div className={styles.weekdayRow}>
         {WEEKDAYS.map((wd) => (
           <div key={wd} className={styles.weekday}>

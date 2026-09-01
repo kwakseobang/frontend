@@ -36,6 +36,10 @@
   color: var(--color-text-primary);
 }
 
+.logoSpacer {
+  flex: 1;
+}
+
 .navItem {
   display: flex;
   align-items: center;
@@ -48,7 +52,7 @@
 }
 
 .navItem:hover {
-  background: rgba(244, 239, 230, 0.05);
+  background: var(--color-hover-overlay);
 }
 
 .navItem:last-of-type {
@@ -116,7 +120,7 @@
 }
 
 .profileRow:hover {
-  background: rgba(244, 239, 230, 0.05);
+  background: var(--color-hover-overlay);
 }
 
 .avatar {

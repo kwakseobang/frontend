@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemoryForm, type ImageSlot, type MemoryFormValue } from "@/components/memory/MemoryForm";
 import { MAX_IMAGES_PER_MEMORY } from "@/lib/constants";
-import { createMemory, getMemory, updateMemory } from "@/lib/api/memories";
+import { createDraft, createMemory, getMemory, updateMemory } from "@/lib/api/memories";
 import type { MemoryDetail } from "@/types/api";
 import { todayIso } from "@/lib/memoryView";
 import { ApiError } from "@/lib/api/client";
@@ -73,13 +73,39 @@ function WriteForm({ editId, initial }: { editId: string | null; initial: Memory
     },
   });
 
-  const handleSave = () => {
+  const draftMutation = useMutation({
+    // Only offered for brand-new entries (onSaveDraft is undefined while editing), so every
+    // image slot is a freshly picked file — no "existing" slots to resolve against the server.
+    mutationFn: async (): Promise<number> => {
+      const images = value.images.map((slot) => (slot as { kind: "new"; file: File }).file);
+      return createDraft({ content: value.text, memoryAt: value.time, visibility: value.visibility, images });
+    },
+    onSuccess: (createdId) => {
+      queryClient.invalidateQueries({ queryKey: ["memories"] });
+      router.push(`/entry/${createdId}`);
+    },
+    onError: (err) => {
+      setError(err instanceof ApiError ? err.message : "임시저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    },
+  });
+
+  const validate = () => {
     if (!value.text.trim() && value.images.length === 0) {
       setError("글이나 사진 중 하나는 있어야 해요.");
-      return;
+      return false;
     }
     setError("");
+    return true;
+  };
+
+  const handleSave = () => {
+    if (!validate()) return;
     saveMutation.mutate();
+  };
+
+  const handleSaveDraft = () => {
+    if (!validate()) return;
+    draftMutation.mutate();
   };
 
   return (
@@ -92,9 +118,11 @@ function WriteForm({ editId, initial }: { editId: string | null; initial: Memory
       }}
       onBack={() => router.back()}
       onSave={handleSave}
+      onSaveDraft={editId ? undefined : handleSaveDraft}
       maxImages={MAX_IMAGES_PER_MEMORY}
       error={error}
       saving={saveMutation.isPending}
+      savingDraft={draftMutation.isPending}
     />
   );
 }

@@ -7,6 +7,7 @@ import styles from "./MobileNav.module.css";
 export function MobileNav() {
   const pathname = usePathname();
   const isHome = pathname === "/home";
+  const isFavorites = pathname.startsWith("/favorites");
   const isProfile = pathname.startsWith("/profile");
 
   return (
@@ -18,14 +19,11 @@ export function MobileNav() {
         </svg>
         <span className={styles.label}>홈</span>
       </Link>
-      <Link href="/write" className={styles.newButton}>
-        <span className={styles.newDot}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-on-brand)" strokeWidth="2.4" strokeLinecap="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-        </span>
-        <span className={styles.label}>기록</span>
+      <Link href="/favorites" className={[styles.item, isFavorites ? styles.active : ""].join(" ")}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill={isFavorites ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+        </svg>
+        <span className={styles.label}>즐겨찾기</span>
       </Link>
       <Link href="/profile" className={[styles.item, isProfile ? styles.active : ""].join(" ")}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">

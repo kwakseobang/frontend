@@ -17,7 +17,16 @@ export default function HomePage() {
   const router = useRouter();
   const [mode, setMode] = useState<"calendar" | "list">("calendar");
   const [selectedDate, setSelectedDate] = useState(TODAY_ISO);
-  const [year, month] = selectedDate.split("-").map(Number);
+  const [viewMonth, setViewMonth] = useState(TODAY_ISO.slice(0, 7));
+  const [year, month] = viewMonth.split("-").map(Number);
+
+  const shiftMonth = useCallback((delta: number) => {
+    setViewMonth((prev) => {
+      const [y, m] = prev.split("-").map(Number);
+      const next = new Date(y, m - 1 + delta, 1);
+      return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}`;
+    });
+  }, []);
 
   const timelineQuery = useQuery({
     queryKey: ["memories", "timeline", 1, PAGE_SIZE],
@@ -99,6 +108,8 @@ export default function HomePage() {
           selectedDate={selectedDate}
           todayIso={TODAY_ISO}
           onSelectDate={setSelectedDate}
+          onPrevMonth={() => shiftMonth(-1)}
+          onNextMonth={() => shiftMonth(1)}
           onOpen={openDetail}
         />
       ) : (

@@ -84,6 +84,9 @@
   /* Muted icon stroke (e.g. delete icon) */
   --color-icon-muted: #8f7f74;
 
+  /* Subtle hover overlay on dark surfaces (nav items, icon buttons, menus) */
+  --color-hover-overlay: rgba(244, 239, 230, 0.06);
+
   /* Fonts */
   --font-serif: var(--font-gowun-batang), serif;
   --font-sans: var(--font-noto-sans-kr), sans-serif;
@@ -98,4 +101,96 @@
 
   /* Transitions */
   --ease-standard: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Light mode ("화이트 모드") — same warm brand hue, inverted luminance.
+   Toggled by ThemeProvider setting [data-theme] on <html>. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-bg: #f6f1e7;
+  --color-sidebar-bg: #f1ebdd;
+  --color-panel-1: #fbf8f2;
+  --color-panel-2: #f4efe3;
+  --color-panel-3: #efe7d6;
+
+  /* Borders */
+  --color-border-1: #e3d9c3;
+  --color-border-2: #d5c6a4;
+  --color-border-3: #c7b48d;
+
+  /* Text */
+  --color-text-primary: #2b2419;
+  --color-text-secondary: #756b58;
+  --color-text-muted: #a89a80;
+  --color-text-tertiary: #8f826a;
+  --color-text-quaternary: #5c5140;
+  --color-text-quinary: #3a3122;
+
+  /* Print (인화지) */
+  --color-print: #fffdf8;
+  --color-print-alt: #f4efe4;
+  --color-print-text: #332b22;
+
+  /* Brand */
+  --color-brand: #8a6647;
+  --color-brand-hover: #74533a;
+
+  /* Public badge */
+  --color-public-text: #6d5238;
+  --color-public-bg: rgba(150, 112, 79, 0.14);
+
+  /* Danger */
+  --color-danger: #a1594b;
+  --color-danger-hover: #8e4c3f;
+
+  /* Monospace time labels */
+  --color-mono-1: #7d6a45;
+  --color-mono-2: #8a8172;
+
+  /* White (text/icons on solid brand/danger backgrounds) */
+  --color-on-brand: #fff;
+
+  /* Detail screen body text */
+  --color-detail-text: #2f281f;
+
+  /* Write-screen paper (인화지): ink + date stamp */
+  --color-print-ink: #2f281f;
+  --color-print-stamp: #a8946d;
+
+  /* Small chip background (e.g. image remove button) */
+  --color-chip-bg: #ece3d0;
+
+  /* Inline form error text */
+  --color-error-text: #a1503e;
+
+  /* Calendar cell hover border */
+  --color-border-hover: #c9b088;
+
+  /* Modal border */
+  --color-modal-border: #ded0ac;
+
+  /* Avatar placeholder background */
+  --color-avatar-bg: #e6d9bd;
+
+  /* Landing polaroid mockup */
+  --gradient-polaroid: linear-gradient(150deg, #e8c79a, #c08b62 48%, #7d5a41);
+  --color-caption: #6b5541;
+
+  /* Links */
+  --color-link: #86603f;
+  --color-link-hover: #6b4c30;
+
+  /* Form placeholder text */
+  --color-placeholder: #948a76;
+
+  /* Scrollbar */
+  --color-scrollbar-hover: #c2b08a;
+
+  /* Muted icon stroke (e.g. delete icon) */
+  --color-icon-muted: #7d715f;
+
+  /* Subtle hover overlay on light surfaces */
+  --color-hover-overlay: rgba(43, 36, 25, 0.05);
 }

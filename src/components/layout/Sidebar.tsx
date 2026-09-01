@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./Sidebar.module.css";
 
 export function Sidebar() {
@@ -11,6 +12,7 @@ export function Sidebar() {
   const router = useRouter();
   const { member, logout } = useAuth();
   const isHome = pathname === "/home";
+  const isFavorites = pathname.startsWith("/favorites");
   const isProfile = pathname.startsWith("/profile");
 
   const handleLogout = async () => {
@@ -23,6 +25,8 @@ export function Sidebar() {
       <div className={styles.logoRow}>
         <div className={styles.logoDot} />
         <div className={styles.logoText}>Memento</div>
+        <div className={styles.logoSpacer} />
+        <ThemeToggle />
       </div>
 
       <Link href="/home" className={styles.navItem}>
@@ -32,6 +36,14 @@ export function Sidebar() {
           <line x1="3" y1="9" x2="21" y2="9" />
         </svg>
         <span className={[styles.navLabel, isHome ? styles.active : ""].join(" ")}>홈</span>
+      </Link>
+
+      <Link href="/favorites" className={styles.navItem}>
+        <span className={[styles.navBar, isFavorites ? styles.active : ""].join(" ")} />
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={isFavorites ? "var(--color-text-primary)" : "var(--color-text-secondary)"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+        </svg>
+        <span className={[styles.navLabel, isFavorites ? styles.active : ""].join(" ")}>즐겨찾기</span>
       </Link>
 
       <Link href="/profile" className={styles.navItem}>

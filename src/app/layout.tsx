@@ -2,8 +2,18 @@ import type { Metadata, Viewport } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { QueryProvider } from "@/lib/query/QueryProvider";
+import { ThemeProvider } from "@/lib/theme/ThemeContext";
 import { ToastProvider } from "@/components/toast/ToastProvider";
 import "@/styles/globals.css";
+
+// Runs before hydration so the correct theme applies on first paint —
+// avoids a dark->light (or vice versa) flash for users with a saved preference.
+const NO_FLASH_THEME_SCRIPT = `
+try {
+  var t = localStorage.getItem("memento-theme");
+  if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+} catch (e) {}
+`;
 
 const gowunBatang = Gowun_Batang({
   subsets: ["latin"],
@@ -46,13 +56,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={`${gowunBatang.variable} ${notoSansKr.variable}`}>
+    <html lang="ko" className={`${gowunBatang.variable} ${notoSansKr.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
+      </head>
       <body>
-        <QueryProvider>
-          <AuthProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </AuthProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </AuthProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -23,12 +23,25 @@
 }
 
 .backButton:hover {
-  background: rgba(244, 239, 230, 0.07);
+  background: var(--color-hover-overlay);
 }
 
 .title {
   font: 400 19px var(--font-serif);
   color: var(--color-text-primary);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Compound selector outranks PillButton's single-class variant rules so this
+   wins regardless of CSS-module bundling order, matching .compact's sizing. */
+.headerActions .draftButton {
+  padding: 9px 20px;
+  font-size: 12.5px;
 }
 
 .paper {

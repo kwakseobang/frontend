@@ -37,6 +37,7 @@
 }
 
 .outline {
+  width: auto;
   background: transparent;
   border: 1px solid var(--color-border-2);
   color: var(--color-text-quaternary);
