@@ -1,24 +1,28 @@
 import { request } from "./client";
-import type { MemoryDetail, MemoryListItem, PageResponse, Visibility } from "@/types/api";
+import type { MemoryDetail, MemoryListItem, MemoryStatistics, PageResponse, Visibility } from "@/types/api";
 
 export function getTimeline(page: number, size: number) {
-  return request<PageResponse<MemoryListItem>>("/api/v1/memories", { query: { page, size } });
+  return request<PageResponse<MemoryListItem>>("/api/memories", { query: { page, size } });
+}
+
+export function getMyStatistics() {
+  return request<MemoryStatistics>("/api/memories/statistics");
 }
 
 export function getMemoriesByDate(date: string) {
-  return request<MemoryListItem[]>("/api/v1/memories/date", { query: { date } });
+  return request<MemoryListItem[]>("/api/memories/date", { query: { date } });
 }
 
 export function getMemoryDatesForMonth(year: number, month: number) {
-  return request<string[]>("/api/v1/memories/dates", { query: { year, month } });
+  return request<string[]>("/api/memories/dates", { query: { year, month } });
 }
 
 export function getMemory(id: number | string) {
-  return request<MemoryDetail>(`/api/v1/memories/${id}`);
+  return request<MemoryDetail>(`/api/memories/${id}`);
 }
 
 export function deleteMemory(id: number | string) {
-  return request<void>(`/api/v1/memories/${id}`, { method: "DELETE" });
+  return request<void>(`/api/memories/${id}`, { method: "DELETE" });
 }
 
 export interface MemoryWriteInput {
@@ -44,9 +48,24 @@ function toMemoryForm(input: MemoryWriteInput): FormData {
 }
 
 export function createMemory(input: MemoryWriteInput) {
-  return request<number>("/api/v1/memories", { method: "POST", form: toMemoryForm(input) });
+  return request<number>("/api/memories", { method: "POST", form: toMemoryForm(input) });
 }
 
 export function updateMemory(id: number | string, input: MemoryWriteInput) {
-  return request<void>(`/api/v1/memories/${id}`, { method: "PATCH", form: toMemoryForm(input) });
+  return request<void>(`/api/memories/${id}`, { method: "PATCH", form: toMemoryForm(input) });
+}
+
+/** Same content/media invariant as MemoryWriteInput, but nothing is required until publish. */
+export type MemoryDraftInput = MemoryWriteInput;
+
+export function createDraft(input: MemoryDraftInput) {
+  return request<number>("/api/memories/drafts", { method: "POST", form: toMemoryForm(input) });
+}
+
+export function getDrafts() {
+  return request<MemoryListItem[]>("/api/memories/drafts");
+}
+
+export function publishDraft(id: number | string) {
+  return request<void>(`/api/memories/${id}/publish`, { method: "PATCH" });
 }

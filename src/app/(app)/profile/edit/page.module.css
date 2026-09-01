@@ -23,7 +23,7 @@
 }
 
 .backButton:hover {
-  background: rgba(244, 239, 230, 0.07);
+  background: var(--color-hover-overlay);
 }
 
 .title {

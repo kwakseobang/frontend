@@ -34,23 +34,3 @@
 .label {
   font: 600 10.5px var(--font-sans);
 }
-
-.newButton {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: var(--color-on-brand);
-}
-
-.newDot {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--color-brand);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

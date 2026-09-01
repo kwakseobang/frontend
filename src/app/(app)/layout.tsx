@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileTopBar } from "@/components/layout/MobileTopBar";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { NewEntryFab } from "@/components/layout/NewEntryFab";
 import { useAuth } from "@/lib/auth/AuthContext";
 import styles from "./layout.module.css";
 
@@ -20,10 +22,12 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
   return (
     <div className={styles.shell}>
       <Sidebar />
+      <MobileTopBar />
       <div className={styles.contentOuter}>
         <div className={styles.contentInner}>{children}</div>
       </div>
       <MobileNav />
+      <NewEntryFab />
     </div>
   );
 }

@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import type { Memory } from "@/types/memory";
 import { formatFull } from "@/lib/date";
+import { PillButton } from "@/components/form/PillButton";
+import { useToast } from "@/components/toast/ToastProvider";
 import styles from "./MemoryDetail.module.css";
 
 interface MemoryDetailProps {
@@ -11,13 +14,57 @@ interface MemoryDetailProps {
   onBack: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  isDraft?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
+  favoritePending?: boolean;
+  onPublish?: () => void;
+  publishPending?: boolean;
 }
 
-export function MemoryDetail({ memory, isOwner, backLabel, onBack, onEdit, onDelete }: MemoryDetailProps) {
+export function MemoryDetail({
+  memory,
+  isOwner,
+  backLabel,
+  onBack,
+  onEdit,
+  onDelete,
+  isDraft,
+  isFavorite,
+  onToggleFavorite,
+  favoritePending,
+  onPublish,
+  publishPending,
+}: MemoryDetailProps) {
+  const { showToast } = useToast();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const isPublic = memory.visibility === "PUBLIC";
+  // A draft is hidden from everyone but its owner regardless of visibility (the
+  // backend 404s it for other viewers), so a copied link would just be dead until publish.
+  const canShareLink = isPublic && !isDraft;
   const badgeStyle = isPublic
     ? { color: "var(--color-public-text)", background: "var(--color-public-bg)" }
     : { color: "var(--color-text-secondary)", background: "rgba(143,135,120,.12)" };
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  const handleCopyLink = async () => {
+    setMenuOpen(false);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/entry/${memory.id}`);
+      showToast("링크가 복사되었습니다");
+    } catch {
+      showToast("링크 복사에 실패했습니다");
+    }
+  };
 
   return (
     <div className={styles.wrap}>
@@ -28,23 +75,87 @@ export function MemoryDetail({ memory, isOwner, backLabel, onBack, onEdit, onDel
           </svg>
           {backLabel}
         </button>
-        {isOwner && (
+        {(isOwner || canShareLink) && (
           <div className={styles.actions}>
-            <button className={styles.iconButton} onClick={onEdit} aria-label="수정">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-quaternary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4Z" />
-              </svg>
-            </button>
-            <button className={[styles.iconButton, styles.danger].join(" ")} onClick={onDelete} aria-label="삭제">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-icon-muted)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-            </button>
+            {isOwner && isDraft && (
+              <PillButton variant="compact" onClick={onPublish} disabled={publishPending}>
+                {publishPending ? "발행 중..." : "발행하기"}
+              </PillButton>
+            )}
+            {isOwner && (
+              <button
+                className={styles.iconButton}
+                onClick={onToggleFavorite}
+                disabled={favoritePending}
+                aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                aria-pressed={isFavorite}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill={isFavorite ? "var(--color-brand)" : "none"}
+                  stroke={isFavorite ? "var(--color-brand)" : "var(--color-text-quaternary)"}
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8L12 17.6l-6.1 3.4 1.5-6.8-5.2-4.7 6.9-.7z" />
+                </svg>
+              </button>
+            )}
+            {(canShareLink || (isOwner && (onEdit || onDelete))) && (
+              <div className={styles.menuWrap} ref={menuRef}>
+                <button
+                  className={styles.iconButton}
+                  onClick={() => setMenuOpen((v) => !v)}
+                  aria-label="더보기"
+                  aria-expanded={menuOpen}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--color-text-quaternary)">
+                    <circle cx="12" cy="5" r="1.8" />
+                    <circle cx="12" cy="12" r="1.8" />
+                    <circle cx="12" cy="19" r="1.8" />
+                  </svg>
+                </button>
+                {menuOpen && (
+                  <div className={styles.menu}>
+                    {canShareLink && (
+                      <button className={styles.menuItem} onClick={handleCopyLink}>
+                        링크 복사
+                      </button>
+                    )}
+                    {isOwner && onEdit && (
+                      <button
+                        className={styles.menuItem}
+                        onClick={() => {
+                          setMenuOpen(false);
+                          onEdit();
+                        }}
+                      >
+                        수정
+                      </button>
+                    )}
+                    {isOwner && onDelete && (
+                      <button
+                        className={[styles.menuItem, styles.danger].join(" ")}
+                        onClick={() => {
+                          setMenuOpen(false);
+                          onDelete();
+                        }}
+                      >
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
+
+      {isDraft && <div className={styles.draftBanner}>임시저장된 기록이에요. 발행하기 전까지는 나만 볼 수 있어요.</div>}
 
       {memory.images.length > 0 && (
         <div className={[styles.filmstrip, "filmstrip"].join(" ")}>

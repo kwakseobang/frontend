@@ -30,6 +30,12 @@ export interface MemoryDetail {
   visibility: Visibility;
   imageUrls: string[];
   isOwner: boolean;
+  isDraft: boolean;
+}
+
+export interface MemoryStatistics {
+  totalCount: number;
+  daysTogether: number;
 }
 
 export interface AuthTokens {

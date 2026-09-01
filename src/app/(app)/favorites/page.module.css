@@ -1,0 +1,20 @@
+.wrap {
+  animation: fadeUp 0.34s var(--ease-standard) both;
+}
+
+.header {
+  margin-bottom: 34px;
+}
+
+.title {
+  font: 400 34px var(--font-serif);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.rollCount {
+  font: 10.5px var(--font-mono);
+  color: var(--color-text-muted);
+  letter-spacing: 0.14em;
+  margin-top: 7px;
+}

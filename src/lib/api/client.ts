@@ -49,7 +49,7 @@ let reissuePromise: Promise<AuthTokens | null> | null = null;
 async function doReissue(): Promise<AuthTokens | null> {
   const tokens = getTokens();
   if (!tokens) return null;
-  const res = await rawRequest("/api/v1/auth/reissue", {
+  const res = await rawRequest("/api/auth/reissue", {
     method: "POST",
     json: { refreshToken: tokens.refreshToken },
   });
