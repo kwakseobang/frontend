@@ -1,8 +1,9 @@
 .card {
+  min-width: 0;
   background: var(--color-print);
   padding: 13px 13px 17px;
   border-radius: var(--radius-print);
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.46);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
   transition:
     transform 0.3s var(--ease-standard),
@@ -11,7 +12,7 @@
 
 .card:hover {
   transform: rotate(0deg) translateY(-8px) !important;
-  box-shadow: 0 30px 54px rgba(0, 0, 0, 0.62);
+  box-shadow: var(--shadow-card-hover);
 }
 
 @media (max-width: 560px) {
@@ -31,7 +32,7 @@
   position: absolute;
   top: 9px;
   right: 9px;
-  background: rgba(20, 14, 10, 0.62);
+  background: var(--color-badge-scrim);
   color: var(--color-on-brand);
   font: 600 10.5px var(--font-mono);
   padding: 3px 8px;
@@ -47,6 +48,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: break-word;
   text-wrap: pretty;
 }
 

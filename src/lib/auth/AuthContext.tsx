@@ -1,11 +1,11 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useSyncExternalStore } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as authApi from "@/lib/api/auth";
 import * as membersApi from "@/lib/api/members";
 import { ApiError } from "@/lib/api/client";
-import { clearTokens, getTokens, setTokens } from "@/lib/auth/tokenStorage";
+import { clearTokens, hasTokensSnapshot, setTokens, subscribeToTokens } from "@/lib/auth/tokenStorage";
 import type { Member } from "@/types/api";
 
 const ME_QUERY_KEY = ["member", "me"];
@@ -22,15 +22,18 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
+// Server render has no localStorage, so it always reports "not hydrated, not logged in";
+// the client store takes over on the first commit. Reading this through
+// useSyncExternalStore rather than useEffect+setState keeps the boot to a single render
+// pass and lets a logout in another tab propagate here (see subscribeToTokens).
+const neverChanges = () => () => {};
+const alwaysTrue = () => true;
+const alwaysFalse = () => false;
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [hasTokens, setHasTokens] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setHasTokens(getTokens() !== null);
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useSyncExternalStore(neverChanges, alwaysTrue, alwaysFalse);
+  const hasTokens = useSyncExternalStore(subscribeToTokens, hasTokensSnapshot, alwaysFalse);
 
   // A failed fetch here (network error, backend 5xx, etc.) must not log the
   // user out — only client.ts's 401-after-failed-reissue path may do that.
@@ -46,17 +49,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(
     async (loginId: string, password: string) => {
       const tokens = await authApi.login({ loginId, password });
+      // Verified before persisting: storing first would flip isAuthenticated (and
+      // trigger the guest-only redirect) while the profile fetch is still in flight,
+      // and a failure would then have to be undone mid-navigation.
+      const me = await membersApi.getMeWithToken(tokens.accessToken);
+      queryClient.setQueryData(ME_QUERY_KEY, me);
       setTokens(tokens);
-      try {
-        const me = await membersApi.getMe();
-        queryClient.setQueryData(ME_QUERY_KEY, me);
-        setHasTokens(true);
-      } catch (err) {
-        // Roll back so a reload doesn't silently authenticate with tokens whose
-        // profile fetch we already reported as a login failure.
-        clearTokens();
-        throw err;
-      }
     },
     [queryClient],
   );
@@ -77,7 +75,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // is cleared regardless so the user always ends up logged out client-side.
     } finally {
       clearTokens();
-      setHasTokens(false);
       queryClient.removeQueries({ queryKey: ME_QUERY_KEY });
     }
   }, [queryClient]);

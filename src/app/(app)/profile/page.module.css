@@ -20,6 +20,7 @@
 }
 
 .nickname {
+  margin: 0;
   font: 400 28px var(--font-serif);
   color: var(--color-text-primary);
   letter-spacing: -0.01em;

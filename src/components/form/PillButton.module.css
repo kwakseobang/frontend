@@ -29,7 +29,7 @@
 .large {
   padding: 15px 38px;
   width: auto;
-  box-shadow: 0 10px 26px rgba(150, 112, 79, 0.28);
+  box-shadow: var(--shadow-brand);
 }
 
 .large:active {

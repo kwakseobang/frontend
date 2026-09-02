@@ -56,7 +56,7 @@
 }
 
 .monthNav:hover {
-  background: rgba(150, 112, 79, 0.16);
+  background: var(--color-brand-overlay);
   color: var(--color-text-primary);
 }
 
@@ -107,7 +107,7 @@
 }
 
 .cell.clickable:hover {
-  background: rgba(150, 112, 79, 0.16);
+  background: var(--color-brand-overlay);
 }
 
 .cell.selected:hover {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { Memory } from "@/types/memory";
 import { formatDayLabel, dateOf } from "@/lib/date";
 import { MemoryCard } from "./MemoryCard";
@@ -31,7 +32,7 @@ function groupByDay(memories: Memory[]): DayGroup[] {
 }
 
 export function MemoryGrid({ memories, onOpen }: MemoryGridProps) {
-  const groups = groupByDay(memories);
+  const groups = useMemo(() => groupByDay(memories), [memories]);
 
   return (
     <>

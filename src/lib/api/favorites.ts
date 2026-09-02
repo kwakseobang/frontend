@@ -1,4 +1,5 @@
 import { request } from "./client";
+import { PAGE_SIZE } from "@/lib/constants";
 import type { MemoryListItem, PageResponse } from "@/types/api";
 
 export function addFavorite(memoryId: number | string) {
@@ -13,7 +14,9 @@ export function getFavorites(page: number, size: number) {
   return request<PageResponse<MemoryListItem>>("/api/memories/favorites", { query: { page, size } });
 }
 
-const FAVORITE_ID_PAGE_SIZE = 20;
+// A backend that always reports hasNext:true would otherwise spin this loop forever and
+// hang the detail screen. 100 pages is far past any realistic favorites list.
+const MAX_PAGES = 100;
 
 /**
  * The detail/list APIs don't expose whether a memory is favorited, so the only way to know
@@ -23,12 +26,10 @@ const FAVORITE_ID_PAGE_SIZE = 20;
  */
 export async function getAllFavoriteIds(): Promise<Set<number>> {
   const ids = new Set<number>();
-  let page = 1;
-  while (true) {
-    const res = await getFavorites(page, FAVORITE_ID_PAGE_SIZE);
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const res = await getFavorites(page, PAGE_SIZE);
     for (const item of res.contents) ids.add(item.id);
     if (!res.hasNext) break;
-    page += 1;
   }
   return ids;
 }

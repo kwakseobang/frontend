@@ -1,11 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { Visibility } from "@/types/memory";
 import { formatStamp } from "@/lib/date";
 import { VisibilityChip } from "@/components/form/VisibilityChip";
 import { UnderlineInput } from "@/components/form/UnderlineInput";
 import { PillButton } from "@/components/form/PillButton";
+import { BackChevronIcon } from "@/components/icons/BackChevronIcon";
+import { IMAGE_ACCEPT, validateImageFile } from "@/lib/validateImageFile";
+import { useToast } from "@/components/toast/ToastProvider";
 import styles from "./MemoryForm.module.css";
 
 export type ImageSlot = { kind: "new"; file: File; previewUrl: string } | { kind: "existing"; url: string };
@@ -44,23 +47,61 @@ export function MemoryForm({
 }: MemoryFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const canAddImage = value.images.length < maxImages;
+  const { showToast } = useToast();
+
+  // Every URL.createObjectURL pins its Blob in memory until revoked. Without this the
+  // form leaked one full-size image per pick — visible on a phone after a few edits.
+  const previewUrls = useRef(new Set<string>());
+  useEffect(() => {
+    const urls = previewUrls.current;
+    return () => {
+      for (const url of urls) URL.revokeObjectURL(url);
+      urls.clear();
+    };
+  }, []);
 
   const addFiles = (files: FileList | null) => {
     if (!files) return;
     const room = maxImages - value.images.length;
-    const next: ImageSlot[] = Array.from(files)
-      .slice(0, room)
-      .map((file) => ({ kind: "new", file, previewUrl: URL.createObjectURL(file) }));
+    const selected = Array.from(files);
+    const candidates = selected.slice(0, room);
+    const next: ImageSlot[] = [];
+    let rejected = 0;
+
+    for (const file of candidates) {
+      if (validateImageFile(file)) {
+        rejected += 1;
+        continue;
+      }
+      const previewUrl = URL.createObjectURL(file);
+      previewUrls.current.add(previewUrl);
+      next.push({ kind: "new", file, previewUrl });
+    }
+
+    // Previously the over-limit slice was silent: pick 10 photos with 5 allowed and
+    // half of them just never appeared, with no explanation.
+    if (selected.length > room) {
+      showToast(`사진은 최대 ${maxImages}장까지 첨부할 수 있어요.`);
+    } else if (rejected > 0) {
+      showToast("일부 이미지가 형식/용량 제한으로 제외되었어요.");
+    }
     if (next.length > 0) onChange({ ...value, images: [...value.images, ...next] });
+  };
+
+  const removeImage = (index: number) => {
+    const slot = value.images[index];
+    if (slot.kind === "new") {
+      URL.revokeObjectURL(slot.previewUrl);
+      previewUrls.current.delete(slot.previewUrl);
+    }
+    onChange({ ...value, images: value.images.filter((_, idx) => idx !== index) });
   };
 
   return (
     <div className={styles.wrap}>
       <div className={styles.headerRow}>
         <button className={styles.backButton} onClick={onBack} aria-label="뒤로">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-quaternary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <BackChevronIcon />
         </button>
         <div className={styles.title}>{title}</div>
         <div className={styles.headerActions}>
@@ -101,14 +142,14 @@ export function MemoryForm({
               type="button"
               className={styles.removeButton}
               aria-label="사진 삭제"
-              onClick={() => onChange({ ...value, images: value.images.filter((_, idx) => idx !== i) })}
+              onClick={() => removeImage(i)}
             >
               ✕
             </button>
           </div>
         ))}
         {canAddImage && (
-          <button className={styles.addSlot} onClick={() => inputRef.current?.click()} aria-label="사진 추가">
+          <button type="button" className={styles.addSlot} onClick={() => inputRef.current?.click()} aria-label="사진 추가">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
@@ -118,7 +159,7 @@ export function MemoryForm({
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={IMAGE_ACCEPT}
           multiple
           hidden
           onChange={(e) => {

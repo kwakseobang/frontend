@@ -48,7 +48,7 @@
   background: var(--color-print-alt);
   padding: 15px 15px 0;
   border-radius: var(--radius-print);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-paper);
 }
 
 .textarea {

@@ -27,6 +27,7 @@
 }
 
 .title {
+  margin: 0;
   font: 400 19px var(--font-serif);
   color: var(--color-text-primary);
 }

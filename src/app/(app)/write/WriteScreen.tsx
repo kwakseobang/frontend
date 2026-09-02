@@ -8,7 +8,8 @@ import { MAX_IMAGES_PER_MEMORY } from "@/lib/constants";
 import { createDraft, createMemory, getMemory, updateMemory } from "@/lib/api/memories";
 import type { MemoryDetail } from "@/types/api";
 import { todayIso } from "@/lib/memoryView";
-import { ApiError } from "@/lib/api/client";
+import { isValidDateTime } from "@/lib/date";
+import { toErrorMessage } from "@/lib/errors";
 
 function defaultTime(): string {
   return `${todayIso()}T${new Date().toTimeString().slice(0, 5)}`;
@@ -69,7 +70,7 @@ function WriteForm({ editId, initial }: { editId: string | null; initial: Memory
       router.push(`/entry/${editId ?? createdId}`);
     },
     onError: (err) => {
-      setError(err instanceof ApiError ? err.message : "저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      setError(toErrorMessage(err, "저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 
@@ -85,13 +86,19 @@ function WriteForm({ editId, initial }: { editId: string | null; initial: Memory
       router.push(`/entry/${createdId}`);
     },
     onError: (err) => {
-      setError(err instanceof ApiError ? err.message : "임시저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      setError(toErrorMessage(err, "임시저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 
   const validate = () => {
     if (!value.text.trim() && value.images.length === 0) {
       setError("글이나 사진 중 하나는 있어야 해요.");
+      return false;
+    }
+    // A datetime-local input yields "" when cleared, which the backend rejects with a
+    // generic 400 — and the paper's date stamp had already gone blank by then.
+    if (!isValidDateTime(value.time)) {
+      setError("기록 시간을 입력해주세요.");
       return false;
     }
     setError("");

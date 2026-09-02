@@ -17,21 +17,25 @@ try {
 
 const gowunBatang = Gowun_Batang({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400"],
   variable: "--font-gowun-batang",
   display: "swap",
 });
 
 const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   variable: "--font-noto-sans-kr",
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_DESCRIPTION = "당신의 순간을 기록하세요. 시간이 지나면, 추억이 됩니다.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Memento",
-  description: "당신의 순간을 기록하세요. 시간이 지나면, 추억이 됩니다.",
+  description: SITE_DESCRIPTION,
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -44,6 +48,20 @@ export const metadata: Metadata = {
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Memento",
+    description: SITE_DESCRIPTION,
+    siteName: "Memento",
+    locale: "ko_KR",
+    type: "website",
+    images: ["/icon-512.png"],
+  },
+  twitter: {
+    card: "summary",
+    title: "Memento",
+    description: SITE_DESCRIPTION,
+    images: ["/icon-512.png"],
   },
 };
 

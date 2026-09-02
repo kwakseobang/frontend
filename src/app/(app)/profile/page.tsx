@@ -7,7 +7,7 @@ import { PillButton } from "@/components/form/PillButton";
 import { getMe, updateMyProfileImage } from "@/lib/api/members";
 import { getDrafts, getMyStatistics } from "@/lib/api/memories";
 import { useToast } from "@/components/toast/ToastProvider";
-import { ApiError } from "@/lib/api/client";
+import { toErrorMessage } from "@/lib/errors";
 import styles from "./page.module.css";
 
 export default function ProfilePage() {
@@ -21,7 +21,7 @@ export default function ProfilePage() {
     mutationFn: (file: File) => updateMyProfileImage(file),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["member", "me"] }),
     onError: (err) => {
-      showToast(err instanceof ApiError ? err.message : "이미지 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      showToast(toErrorMessage(err, "이미지 업로드 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 
@@ -37,7 +37,7 @@ export default function ProfilePage() {
             onFileSelected={(file) => avatarMutation.mutate(file)}
           />
           <div>
-            <div className={styles.nickname}>{member.nickname}</div>
+            <h1 className={styles.nickname}>{member.nickname}</h1>
             <div className={styles.username}>@{member.loginId}</div>
           </div>
         </div>

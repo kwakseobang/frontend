@@ -14,7 +14,7 @@ export function toCardMemory(item: MemoryListItem): Memory {
     id: item.id,
     time: item.memoryAt,
     text: item.content ?? "",
-    images: item.thumbnailUrl ? [`url(${item.thumbnailUrl}) center/cover`] : [],
+    images: item.thumbnailUrl ? [item.thumbnailUrl] : [],
     visibility: item.visibility,
   };
 }
@@ -24,7 +24,7 @@ export function toDetailMemory(item: ApiMemoryDetail): Memory {
     id: item.id,
     time: item.memoryAt,
     text: item.content ?? "",
-    images: item.imageUrls.map((url) => `url(${url}) center/cover`),
+    images: item.imageUrls,
     visibility: item.visibility,
   };
 }
