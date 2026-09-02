@@ -6,8 +6,10 @@
     "dev": "pnpm -F @memento/web dev",
     "build": "pnpm -F @memento/web build",
     "start": "pnpm -F @memento/web start",
+    "mobile": "pnpm -F @memento/mobile start",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
     "test:watch": "pnpm -F @memento/web test:watch"
   },
   "packageManager": "pnpm@10.29.2"

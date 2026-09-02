@@ -221,10 +221,14 @@ RN에선 기본값이 동작하지 않는다. `_layout.tsx`에서:
   `getCoreConfig()`가 throw → 기존 catch에 먹혀 **공유 링크 OG 프리뷰가 조용히 죽는다**.
   → `@/lib/core` 배럴이 `configureCore()`를 강제하도록 바꾸고, 스텁 백엔드로 실제 OG 태그 출력까지 확인했다.
 
-### Phase 1 — Expo 부트스트랩 + 리스크 스파이크 (1일)
-- `apps/mobile` 생성(SDK 57, expo-router 템플릿) + Metro 모노레포 설정.
-- 로그인 → SecureStore 저장 → `GET /api/members/profile` 성공까지 관통.
-- **§2.4 멀티파트 스파이크**: 사진 1장 + JSON 파트로 `POST /api/memories` 실기기 성공 확인. 여기서 1안/2안 확정.
+### Phase 1 — Expo 부트스트랩 + 리스크 스파이크 ⏳ 코드 완료 / 실기기 검증 대기
+- ✅ `apps/mobile` 생성(SDK 57, expo-router) + Metro 모노레포 설정.
+- ✅ RN 어댑터: SecureStore 세션, 멀티파트 조립, 401 → `router.replace("/login")`.
+- ✅ 로그인/회원가입/홈(프로필·통계) 화면, 스플래시 게이팅, React Query의 RN 설정(NetInfo·AppState).
+- ✅ iOS·Android 번들 생성 성공, 타입체크 ✓, 테스트 12개 ✓.
+- ⏳ **§2.4 멀티파트 스파이크는 실기기에서만 확정된다.** `app/multipart-spike.tsx`가 그 하네스다.
+- 버전 정정: SDK 57이 묶는 RN은 **0.86.3**(npm latest인 0.87.1이 아님 — 0.87은 `rn-get-polyfills`를
+  없애서 Metro가 번들에 실패한다). React도 **19.2.3**으로 웹과 함께 맞췄다.
 
 ### Phase 2 — 디자인 시스템 + 인증 (1~2일)
 tokens.ts, ThemeProvider, 폰트, 공용 프리미티브(PillButton/UnderlineInput/VisibilityChip/EmptyState/Toast/Modal/ActionSheet), 로그인·회원가입·가드·스플래시.

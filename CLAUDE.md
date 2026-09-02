@@ -3,7 +3,7 @@
 `memento`(Spring Boot 백엔드)의 클라이언트 모노레포. 디자인 컨셉은 "암실(Darkroom)" — 어두운 배경 위에 인화지(사진/카드)만 빛나는 다크모드 저널링 앱.
 
 - `apps/web` — React + Next.js(App Router) + TypeScript, PWA로 설치 가능
-- `apps/mobile` — Expo(React Native) 앱 *(Phase 1부터 생성)*
+- `apps/mobile` — Expo(React Native) 앱
 - `packages/core` — 두 클라이언트가 공유하는 API 클라이언트·타입·세션·순수 유틸
 
 @apps/web/AGENTS.md
@@ -62,8 +62,12 @@
 
 `@memento/core`를 **직접 import하지 않는다.** 항상 `@/lib/core` 배럴을 거친다 — 이 배럴이 `configureCore()` 실행을 보장한다. 직접 import하면 컴파일은 되고 서버 컴포넌트(`app/entry/[id]/page.tsx`의 `generateMetadata`)에서만 런타임에 터진다: RSC 패스는 클라이언트 모듈 본문을 평가하지 않으므로 설정이 붙지 않는다.
 
-## 모바일
+## 모바일 (`apps/mobile`)
 
-- 구현 계획은 `docs/mobile-rn-plan.md` (Phase 0~5). Phase 0(모노레포 재편) 완료.
-- Expo SDK 57 + expo-router. `apps/mobile`은 Phase 1에서 생성한다.
-- **`POST /api/memories`의 multipart JSON 파트가 Phase 1 최우선 검증 항목이다** — RN의 `FormData`는 `Blob` 파트의 Content-Type을 유실시키는데 Spring `@RequestPart`가 그걸 요구한다.
+- 구현 계획은 `docs/mobile-rn-plan.md` (Phase 0~5). Phase 0 완료, Phase 1은 실기기 검증만 남음.
+- **Expo SDK 57 + expo-router. RN은 0.86.3, React는 19.2.3으로 고정** — npm latest를 쓰면 안 된다. RN 0.87은 `rn-get-polyfills`를 없애서 Metro 번들이 실패한다. 버전 조정은 항상 `npx expo install` / `npx expo install --fix`로 한다.
+- 실행: `pnpm mobile` (= `expo start`). 기기 없이 검증하려면 `npx expo export --platform ios`로 번들이 만들어지는지 본다.
+- API 주소는 `EXPO_PUBLIC_API_BASE_URL` (`apps/mobile/.env.local`). **기기에서 `localhost`는 폰 자신이라 백엔드에 닿지 않는다** — 맥 LAN IP를 쓰고, Android 에뮬레이터는 `10.0.2.2`.
+- 웹과 마찬가지로 `@memento/core`를 직접 import하지 않고 `@/lib/core` 배럴을 거친다.
+- 폰트는 반드시 **웨이트별 서브패스**로 import한다 (`@expo-google-fonts/noto-sans-kr/400Regular`). 패키지 루트에서 가져오면 안 쓰는 웨이트까지 전부 번들에 들어간다 — 한글 TTF가 웨이트당 6MB라 69MB가 됐었다.
+- **미검증 위험: `POST /api/memories`의 multipart JSON 파트.** RN의 `FormData`는 `Blob` 파트의 Content-Type을 유실시키는데 Spring `@RequestPart`가 그걸 요구한다. 어댑터(`src/lib/core/multipart.ts`)는 JSON을 파일로 써서 파일 파트로 보낸다. 실기기 확인용 하네스가 `app/multipart-spike.tsx`이며, 실패하면 백엔드가 `request`를 문자열 폼 필드로도 받게 하는 2안으로 간다.
