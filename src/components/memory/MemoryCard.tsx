@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import Image from "next/image";
 import type { Memory } from "@/types/memory";
 import { formatTime } from "@/lib/date";
 import styles from "./MemoryCard.module.css";
@@ -31,7 +32,14 @@ export const MemoryCard = memo(function MemoryCard({ memory, rotate, onOpen }: M
       }}
     >
       {hasImages && (
-        <div className={styles.imageWrap} style={{ background: memory.images[0] }}>
+        <div className={styles.imageWrap}>
+          <Image
+            src={memory.images[0]}
+            alt=""
+            fill
+            sizes="(max-width: 479px) 100vw, (max-width: 767px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
+          />
           {hasExtra && <div className={styles.extraBadge}>+{memory.images.length - 1}</div>}
         </div>
       )}

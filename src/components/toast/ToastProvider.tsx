@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import styles from "./ToastProvider.module.css";
 
 interface Toast {
@@ -17,13 +17,24 @@ const ToastContext = createContext<ToastState | null>(null);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const idRef = useRef(0);
+  const timersRef = useRef(new Set<ReturnType<typeof setTimeout>>());
+
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      for (const timer of timers) clearTimeout(timer);
+      timers.clear();
+    };
+  }, []);
 
   const showToast = useCallback((message: string) => {
     const id = idRef.current++;
     setToasts((prev) => [...prev, { id, message }]);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      timersRef.current.delete(timer);
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 2600);
+    timersRef.current.add(timer);
   }, []);
 
   return (

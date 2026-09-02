@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
+import { IMAGE_ACCEPT, validateImageFile } from "@/lib/validateImageFile";
+import { useToast } from "@/components/toast/ToastProvider";
 import styles from "./AvatarUploadSlot.module.css";
 
 interface AvatarUploadSlotProps {
@@ -18,10 +21,17 @@ export function AvatarUploadSlot({
 }: AvatarUploadSlotProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const { showToast } = useToast();
 
   const handleFiles = (files: FileList | null) => {
     const file = files?.[0];
-    if (file) onFileSelected(file);
+    if (!file) return;
+    const error = validateImageFile(file);
+    if (error) {
+      showToast(error);
+      return;
+    }
+    onFileSelected(file);
   };
 
   return (
@@ -50,15 +60,14 @@ export function AvatarUploadSlot({
       }}
     >
       {imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageUrl} alt="프로필 이미지" className={styles.image} />
+        <Image src={imageUrl} alt="프로필 이미지" className={styles.image} width={size} height={size} />
       ) : (
         <span className={styles.placeholder}>{placeholderLetter}</span>
       )}
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={IMAGE_ACCEPT}
         className={styles.fileInput}
         onChange={(e) => handleFiles(e.target.files)}
       />

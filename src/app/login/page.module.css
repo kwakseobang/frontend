@@ -20,6 +20,7 @@
 }
 
 .logo {
+  margin: 0;
   font: 400 38px var(--font-serif);
   color: var(--color-text-primary);
 }

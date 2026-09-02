@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Memory } from "@/types/memory";
 import { formatFull } from "@/lib/date";
 import { PillButton } from "@/components/form/PillButton";
+import { BackChevronIcon } from "@/components/icons/BackChevronIcon";
 import { useToast } from "@/components/toast/ToastProvider";
 import styles from "./MemoryDetail.module.css";
 
@@ -45,15 +47,24 @@ export function MemoryDetail({
   const canShareLink = isPublic && !isDraft;
   const badgeStyle = isPublic
     ? { color: "var(--color-public-text)", background: "var(--color-public-bg)" }
-    : { color: "var(--color-text-secondary)", background: "rgba(143,135,120,.12)" };
+    : { color: "var(--color-text-secondary)", background: "var(--color-private-bg)" };
 
   useEffect(() => {
     if (!menuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
     };
+    // Escape closed every other dismissible surface in the app but not this menu,
+    // which left keyboard users with no way out short of clicking elsewhere.
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [menuOpen]);
 
   const handleCopyLink = async () => {
@@ -70,9 +81,7 @@ export function MemoryDetail({
     <div className={styles.wrap}>
       <div className={styles.headerRow}>
         <button className={styles.backLink} onClick={onBack}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <BackChevronIcon size={17} stroke="currentColor" />
           {backLabel}
         </button>
         {(isOwner || canShareLink) && (
@@ -160,7 +169,16 @@ export function MemoryDetail({
       {memory.images.length > 0 && (
         <div className={[styles.filmstrip, "filmstrip"].join(" ")}>
           {memory.images.map((img, i) => (
-            <div key={i} className={styles.filmstripImage} style={{ background: img }} />
+            <div key={i} className={styles.filmstripImage}>
+              <Image
+                src={img}
+                alt=""
+                fill
+                sizes="(max-width: 520px) 280px, 440px"
+                style={{ objectFit: "cover" }}
+                priority={i === 0}
+              />
+            </div>
           ))}
         </div>
       )}

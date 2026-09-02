@@ -6,7 +6,7 @@ export interface Memory {
   /** memoryAt, ISO-ish local datetime without timezone, e.g. "2026-08-18T15:12" */
   time: string;
   text: string;
-  /** CSS `background` values — real image URLs wrapped as `url(...)` */
+  /** Raw image URLs (GCS-hosted) — rendered via next/image, see MemoryCard/MemoryDetail. */
   images: string[];
   visibility: Visibility;
 }

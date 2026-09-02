@@ -87,6 +87,31 @@
   /* Subtle hover overlay on dark surfaces (nav items, icon buttons, menus) */
   --color-hover-overlay: rgba(244, 239, 230, 0.06);
 
+  /* Translucent fills. Kept as tokens because each one needs a different alpha/hue
+     per theme — a black scrim that reads as "depth" on #0a0908 reads as dirt on cream. */
+  --color-brand-overlay: rgba(150, 112, 79, 0.16);
+  --color-brand-overlay-strong: rgba(150, 112, 79, 0.18);
+  --color-draft-bg: rgba(150, 112, 79, 0.12);
+  --color-private-bg: rgba(143, 135, 120, 0.12);
+  --color-danger-overlay: rgba(156, 95, 82, 0.14);
+  /* Scrim behind the "+N" count that sits directly on a photo */
+  --color-badge-scrim: rgba(20, 14, 10, 0.62);
+  --color-modal-scrim: rgba(5, 4, 3, 0.72);
+  --color-vignette: rgba(150, 112, 79, 0.2);
+
+  /* Elevation. Same reason as above: pure-black drop shadows are the darkroom look,
+     but on the light theme they have to become soft warm-brown or the UI looks bruised. */
+  --shadow-hero: 0 34px 64px rgba(0, 0, 0, 0.62);
+  --shadow-card: 0 18px 34px rgba(0, 0, 0, 0.46);
+  --shadow-card-hover: 0 30px 54px rgba(0, 0, 0, 0.62);
+  --shadow-menu: 0 16px 36px rgba(0, 0, 0, 0.45);
+  --shadow-print: 0 20px 44px rgba(0, 0, 0, 0.5);
+  --shadow-paper: 0 24px 48px rgba(0, 0, 0, 0.5);
+  --shadow-fab: 0 10px 26px rgba(0, 0, 0, 0.45);
+  --shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 30px 70px rgba(0, 0, 0, 0.6);
+  --shadow-brand: 0 10px 26px rgba(150, 112, 79, 0.28);
+
   /* Fonts */
   --font-serif: var(--font-gowun-batang), serif;
   --font-sans: var(--font-noto-sans-kr), sans-serif;
@@ -193,4 +218,27 @@
 
   /* Subtle hover overlay on light surfaces */
   --color-hover-overlay: rgba(43, 36, 25, 0.05);
+
+  /* Translucent fills */
+  --color-brand-overlay: rgba(150, 112, 79, 0.14);
+  --color-brand-overlay-strong: rgba(150, 112, 79, 0.16);
+  --color-draft-bg: rgba(150, 112, 79, 0.1);
+  --color-private-bg: rgba(117, 107, 88, 0.14);
+  --color-danger-overlay: rgba(161, 89, 75, 0.12);
+  /* Still dark — it sits on a photo, not on the page background */
+  --color-badge-scrim: rgba(43, 36, 25, 0.55);
+  --color-modal-scrim: rgba(43, 36, 25, 0.45);
+  --color-vignette: rgba(150, 112, 79, 0.16);
+
+  /* Elevation — warm brown at low alpha instead of black */
+  --shadow-hero: 0 24px 48px rgba(74, 58, 42, 0.18);
+  --shadow-card: 0 10px 22px rgba(74, 58, 42, 0.12);
+  --shadow-card-hover: 0 18px 34px rgba(74, 58, 42, 0.18);
+  --shadow-menu: 0 12px 28px rgba(74, 58, 42, 0.16);
+  --shadow-print: 0 14px 30px rgba(74, 58, 42, 0.18);
+  --shadow-paper: 0 16px 34px rgba(74, 58, 42, 0.14);
+  --shadow-fab: 0 8px 20px rgba(74, 58, 42, 0.2);
+  --shadow-toast: 0 6px 18px rgba(74, 58, 42, 0.16);
+  --shadow-modal: 0 24px 54px rgba(74, 58, 42, 0.22);
+  --shadow-brand: 0 10px 26px rgba(138, 102, 71, 0.3);
 }

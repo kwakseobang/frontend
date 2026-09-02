@@ -58,7 +58,7 @@
   background: var(--color-panel-3);
   border: 1px solid var(--color-border-2);
   border-radius: 12px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-menu);
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -87,13 +87,13 @@
 }
 
 .menuItem.danger:hover {
-  background: rgba(156, 95, 82, 0.14);
+  background: var(--color-danger-overlay);
 }
 
 .draftBanner {
   font: 600 12.5px var(--font-sans);
   color: var(--color-text-secondary);
-  background: rgba(150, 112, 79, 0.12);
+  background: var(--color-draft-bg);
   border: 1px solid var(--color-border-1);
   border-radius: 10px;
   padding: 10px 14px;
@@ -110,12 +110,14 @@
 }
 
 .filmstripImage {
+  position: relative;
   width: 440px;
   height: 440px;
   flex-shrink: 0;
   border-radius: 6px;
+  overflow: hidden;
   scroll-snap-align: start;
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-print);
 }
 
 @media (max-width: 520px) {
@@ -135,6 +137,7 @@
   margin-bottom: 34px;
   text-wrap: pretty;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .footer {

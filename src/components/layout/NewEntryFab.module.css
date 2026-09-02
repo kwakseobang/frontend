@@ -15,7 +15,7 @@
     border-radius: 50%;
     background: var(--color-brand);
     color: var(--color-on-brand);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+    box-shadow: var(--shadow-fab);
     z-index: 31;
     transition:
       background 0.2s ease,

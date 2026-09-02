@@ -2,22 +2,25 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { CalendarPanel } from "@/components/memory/CalendarPanel";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { PillButton } from "@/components/form/PillButton";
 import { getMemoriesByDate, getMemoryDatesForMonth, getTimeline } from "@/lib/api/memories";
+import { PAGE_SIZE } from "@/lib/constants";
 import { toCardMemory, todayIso } from "@/lib/memoryView";
 import styles from "./page.module.css";
 
-const TODAY_ISO = todayIso();
-const PAGE_SIZE = 20;
-
 export default function HomePage() {
   const router = useRouter();
+  // Computed per mount, not at module load: the module is evaluated once per browser
+  // session, so an installed PWA left open past midnight kept highlighting yesterday
+  // as "today" and opening the calendar on it.
+  const [today] = useState(todayIso);
   const [mode, setMode] = useState<"calendar" | "list">("calendar");
-  const [selectedDate, setSelectedDate] = useState(TODAY_ISO);
-  const [viewMonth, setViewMonth] = useState(TODAY_ISO.slice(0, 7));
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [viewMonth, setViewMonth] = useState(() => today.slice(0, 7));
   const [year, month] = viewMonth.split("-").map(Number);
 
   const shiftMonth = useCallback((delta: number) => {
@@ -28,9 +31,11 @@ export default function HomePage() {
     });
   }, []);
 
-  const timelineQuery = useQuery({
-    queryKey: ["memories", "timeline", 1, PAGE_SIZE],
-    queryFn: () => getTimeline(1, PAGE_SIZE),
+  const timelineQuery = useInfiniteQuery({
+    queryKey: ["memories", "timeline"],
+    queryFn: ({ pageParam }) => getTimeline(pageParam, PAGE_SIZE),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => (lastPage.hasNext ? allPages.length + 1 : undefined),
     enabled: mode === "list",
   });
 
@@ -47,7 +52,10 @@ export default function HomePage() {
   });
 
   const listMemories = useMemo(
-    () => (timelineQuery.data?.contents ?? []).map(toCardMemory).sort((a, b) => b.time.localeCompare(a.time)),
+    () =>
+      (timelineQuery.data?.pages.flatMap((page) => page.contents) ?? [])
+        .map(toCardMemory)
+        .sort((a, b) => b.time.localeCompare(a.time)),
     [timelineQuery.data],
   );
   const dayMemories = useMemo(
@@ -69,7 +77,7 @@ export default function HomePage() {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div>
-          <div className={styles.title}>기록</div>
+          <h1 className={styles.title}>기록</h1>
           <div className={styles.rollCount}>
             ROLL NO. {String(mode === "list" ? listMemories.length : entryDates.size).padStart(3, "0")}
           </div>
@@ -106,14 +114,27 @@ export default function HomePage() {
           month={month - 1}
           monthLabel={`${year}년 ${month}월`}
           selectedDate={selectedDate}
-          todayIso={TODAY_ISO}
+          todayIso={today}
           onSelectDate={setSelectedDate}
           onPrevMonth={() => shiftMonth(-1)}
           onNextMonth={() => shiftMonth(1)}
           onOpen={openDetail}
         />
       ) : (
-        <MemoryGrid memories={listMemories} onOpen={openDetail} />
+        <>
+          <MemoryGrid memories={listMemories} onOpen={openDetail} />
+          {timelineQuery.hasNextPage && (
+            <div className={styles.loadMoreRow}>
+              <PillButton
+                variant="outline"
+                onClick={() => timelineQuery.fetchNextPage()}
+                disabled={timelineQuery.isFetchingNextPage}
+              >
+                {timelineQuery.isFetchingNextPage ? "불러오는 중..." : "더 보기"}
+              </PillButton>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

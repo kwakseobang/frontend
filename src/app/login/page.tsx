@@ -7,7 +7,7 @@ import { UnderlineInput } from "@/components/form/UnderlineInput";
 import { PillButton } from "@/components/form/PillButton";
 import { GuestOnly } from "@/components/auth/GuestOnly";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { ApiError } from "@/lib/api/client";
+import { toErrorMessage } from "@/lib/errors";
 import styles from "./page.module.css";
 
 export default function LoginPage() {
@@ -26,7 +26,7 @@ export default function LoginPage() {
       await login(loginId, password);
       router.push("/home");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      setError(toErrorMessage(err, "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     } finally {
       setSubmitting(false);
     }
@@ -37,15 +37,21 @@ export default function LoginPage() {
       <div className={styles.page}>
         <form className={styles.card} onSubmit={handleSubmit}>
           <div className={styles.header}>
-            <div className={styles.logo}>Memento</div>
+            <h1 className={styles.logo}>Memento</h1>
             <div className={styles.tagline}>다시, 그 순간으로</div>
           </div>
 
+          {/* autoComplete/autoCapitalize are what let iOS and password managers offer to
+              fill and save this login — without them the PWA silently loses that. */}
           <div className={styles.fields}>
             <UnderlineInput
               type="text"
               placeholder="아이디"
               name="loginId"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
             />
@@ -53,6 +59,7 @@ export default function LoginPage() {
               type="password"
               placeholder="비밀번호"
               name="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

@@ -18,7 +18,7 @@
 }
 
 .chip.active {
-  background: rgba(150, 112, 79, 0.18);
+  background: var(--color-brand-overlay-strong);
   color: var(--color-text-primary);
   border-color: var(--color-brand);
 }

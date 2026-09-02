@@ -11,6 +11,7 @@ import { addFavorite, getAllFavoriteIds, removeFavorite } from "@/lib/api/favori
 import { toDetailMemory } from "@/lib/memoryView";
 import { useToast } from "@/components/toast/ToastProvider";
 import { ApiError } from "@/lib/api/client";
+import { toErrorMessage } from "@/lib/errors";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 export function EntryScreen({ id }: { id: string }) {
@@ -40,7 +41,7 @@ export function EntryScreen({ id }: { id: string }) {
       router.push("/home");
     },
     onError: (err) => {
-      showToast(err instanceof ApiError ? err.message : "삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      showToast(toErrorMessage(err, "삭제 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 
@@ -50,7 +51,7 @@ export function EntryScreen({ id }: { id: string }) {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: (err) => {
-      showToast(err instanceof ApiError ? err.message : "즐겨찾기 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      showToast(toErrorMessage(err, "즐겨찾기 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 
@@ -61,7 +62,7 @@ export function EntryScreen({ id }: { id: string }) {
       showToast("기록이 발행되었습니다");
     },
     onError: (err) => {
-      showToast(err instanceof ApiError ? err.message : "발행 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      showToast(toErrorMessage(err, "발행 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));
     },
   });
 

@@ -1,6 +1,9 @@
 import { clearTokens, getTokens, setTokens } from "@/lib/auth/tokenStorage";
 import type { AuthTokens } from "@/types/api";
 
+if (!process.env.NEXT_PUBLIC_API_BASE_URL && process.env.NODE_ENV === "production") {
+  throw new Error("NEXT_PUBLIC_API_BASE_URL is not set — refusing to run a production build against an implicit localhost fallback.");
+}
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
 export class ApiError extends Error {
@@ -20,6 +23,12 @@ interface RequestOptions {
   form?: FormData;
   query?: Record<string, string | number | undefined>;
   auth?: boolean;
+  /**
+   * Use this token instead of the stored session. Lets the login flow verify a
+   * freshly issued token before persisting it, so a half-authenticated state never
+   * reaches the UI. A 401 here is final — there is nothing to reissue against.
+   */
+  accessToken?: string;
 }
 
 function buildUrl(path: string, query?: RequestOptions["query"]): string {
@@ -111,11 +120,12 @@ async function parseError(res: Response): Promise<ParsedError> {
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const auth = options.auth ?? true;
-  let tokens = auth ? getTokens() : null;
+  const explicitToken = options.accessToken;
+  let accessToken = explicitToken ?? (auth ? getTokens()?.accessToken : undefined);
 
-  let res = await rawRequest(path, options, tokens?.accessToken);
+  let res = await rawRequest(path, options, accessToken);
 
-  if (res.status === 401 && auth) {
+  if (res.status === 401 && auth && !explicitToken) {
     const reissued = await reissue();
     if (!reissued) {
       clearTokens();
@@ -125,8 +135,8 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       if (typeof window !== "undefined") window.location.href = "/login";
       throw new ApiError(401, "인증이 만료되었습니다");
     }
-    tokens = reissued;
-    res = await rawRequest(path, options, tokens.accessToken);
+    accessToken = reissued.accessToken;
+    res = await rawRequest(path, options, accessToken);
   }
 
   if (!res.ok) {

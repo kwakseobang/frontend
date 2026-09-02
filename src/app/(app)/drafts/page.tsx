@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
 import { EmptyState } from "@/components/feedback/EmptyState";
@@ -22,11 +22,12 @@ export default function DraftsPage() {
     [data],
   );
   const isEmpty = !isLoading && memories.length === 0;
+  const openDetail = useCallback((id: number) => router.push(`/entry/${id}`), [router]);
 
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
-        <div className={styles.title}>임시저장</div>
+        <h1 className={styles.title}>임시저장</h1>
         <div className={styles.rollCount}>ROLL NO. {String(memories.length).padStart(3, "0")}</div>
       </div>
 
@@ -38,7 +39,7 @@ export default function DraftsPage() {
           onCta={() => router.push("/write")}
         />
       ) : (
-        <MemoryGrid memories={memories} onOpen={(id) => router.push(`/entry/${id}`)} />
+        <MemoryGrid memories={memories} onOpen={openDetail} />
       )}
     </div>
   );

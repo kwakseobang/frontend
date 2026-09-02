@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -69,8 +70,7 @@ export function Sidebar() {
       <Link href="/profile" className={styles.profileRow}>
         <div className={styles.avatar}>
           {member?.profileImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={member.profileImageUrl} alt="" className={styles.avatarImage} />
+            <Image src={member.profileImageUrl} alt="" className={styles.avatarImage} width={30} height={30} />
           ) : (
             member?.nickname.charAt(0)
           )}

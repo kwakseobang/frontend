@@ -25,9 +25,9 @@
 }
 
 .title {
+  margin: 0 0 8px;
   font: 400 30px/1.4 var(--font-serif);
   color: var(--color-text-primary);
-  margin-bottom: 8px;
 }
 
 .subtitle {
@@ -62,4 +62,10 @@
   font: 12px var(--font-sans);
   color: var(--color-error-text);
   text-align: center;
+}
+
+.passwordHint {
+  font: 11px var(--font-sans);
+  color: var(--color-text-muted);
+  margin-top: 9px;
 }
