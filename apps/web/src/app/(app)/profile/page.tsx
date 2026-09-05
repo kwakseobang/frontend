@@ -3,6 +3,8 @@
 import { membersApi, memoriesApi, toErrorMessage } from "@/lib/core";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ErrorState } from "@/components/feedback/ErrorState";
+import { LoadingState } from "@/components/feedback/LoadingState";
 import { AvatarUploadSlot } from "@/components/upload/AvatarUploadSlot";
 import { PillButton } from "@/components/form/PillButton";
 
@@ -13,7 +15,13 @@ import styles from "./page.module.css";
 export default function ProfilePage() {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const { data: member, isLoading } = useQuery({ queryKey: ["member", "me"], queryFn: membersApi.getMe });
+  const {
+    data: member,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({ queryKey: ["member", "me"], queryFn: membersApi.getMe });
   const { data: statistics } = useQuery({ queryKey: ["memories", "statistics"], queryFn: memoriesApi.getMyStatistics });
   const { data: drafts } = useQuery({ queryKey: ["memories", "drafts"], queryFn: memoriesApi.getDrafts });
 
@@ -25,7 +33,12 @@ export default function ProfilePage() {
     },
   });
 
-  if (isLoading || !member) return null;
+  if (isLoading) return <LoadingState label="프로필을 불러오는 중" />;
+  // `!member` without an error means the query is disabled or still settling; treating
+  // it as a failure here is what the retry button is for either way.
+  if (isError || !member) {
+    return <ErrorState error={error} fallback="프로필을 불러오지 못했습니다" onRetry={() => void refetch()} />;
+  }
 
   return (
     <div className={styles.wrap}>

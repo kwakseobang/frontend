@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemoryDetail } from "@/components/memory/MemoryDetail";
 import { DeleteConfirmModal } from "@/components/feedback/DeleteConfirmModal";
+import { LoadingState } from "@/components/feedback/LoadingState";
 import { PillButton } from "@/components/form/PillButton";
 
 import { useToast } from "@/components/toast/ToastProvider";
@@ -22,7 +23,6 @@ export function EntryScreen({ id }: { id: string }) {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["memories", id],
     queryFn: () => memoriesApi.getMemory(id),
-    retry: (failureCount, err) => err instanceof ApiError && err.status >= 500 && failureCount < 2,
   });
 
   const favoriteIdsQuery = useQuery({
@@ -64,7 +64,7 @@ export function EntryScreen({ id }: { id: string }) {
     },
   });
 
-  if (isLoading) return null;
+  if (isLoading) return <LoadingState label="기록을 불러오는 중" />;
 
   if (isError || !data) {
     const notFound = error instanceof ApiError && (error.status === 404 || error.status === 403);

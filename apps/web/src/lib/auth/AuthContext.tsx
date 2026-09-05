@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ApiError,
   authApi,
   clearTokens,
   hasTokensSnapshot,
@@ -43,12 +42,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // A failed fetch here (network error, backend 5xx, etc.) must not log the
   // user out — only client.ts's 401-after-failed-reissue path may do that.
   // A genuine 401 that reaches this query has already gone through that path
-  // (tokens cleared, redirected to /login), so retrying it is pointless.
+  // (tokens cleared, redirected to /login), so QueryProvider's shared retry policy
+  // (transport failures and 5xx only) is exactly right here and is left in place.
   const { data: member } = useQuery({
     queryKey: ME_QUERY_KEY,
     queryFn: membersApi.getMe,
     enabled: hasTokens,
-    retry: (failureCount, err) => (err instanceof ApiError && err.status === 401 ? false : failureCount < 2),
   });
 
   const login = useCallback(

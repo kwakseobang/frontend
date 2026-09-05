@@ -6,13 +6,15 @@ import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorState } from "@/components/feedback/ErrorState";
+import { LoadingState } from "@/components/feedback/LoadingState";
 
 import styles from "./page.module.css";
 
 export default function DraftsPage() {
   const router = useRouter();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["memories", "drafts"],
     queryFn: memoriesApi.getDrafts,
   });
@@ -31,7 +33,11 @@ export default function DraftsPage() {
         <div className={styles.rollCount}>ROLL NO. {String(memories.length).padStart(3, "0")}</div>
       </div>
 
-      {isLoading ? null : isEmpty ? (
+      {isLoading ? (
+        <LoadingState label="임시저장을 불러오는 중" />
+      ) : isError ? (
+        <ErrorState error={error} fallback="임시저장을 불러오지 못했습니다" onRetry={() => void refetch()} />
+      ) : isEmpty ? (
         <EmptyState
           title="임시저장한 기록이 없습니다"
           subtitle="쓰다 만 기록을 이어서 완성해보세요"

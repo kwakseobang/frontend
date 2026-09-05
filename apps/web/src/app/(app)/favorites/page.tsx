@@ -6,6 +6,8 @@ import { useCallback, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorState } from "@/components/feedback/ErrorState";
+import { LoadingState } from "@/components/feedback/LoadingState";
 import { PillButton } from "@/components/form/PillButton";
 
 import styles from "./page.module.css";
@@ -13,12 +15,13 @@ import styles from "./page.module.css";
 export default function FavoritesPage() {
   const router = useRouter();
 
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["favorites", "list"],
-    queryFn: ({ pageParam }) => favoritesApi.getFavorites(pageParam, PAGE_SIZE),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => (lastPage.hasNext ? allPages.length + 1 : undefined),
-  });
+  const { data, isLoading, isError, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      queryKey: ["favorites", "list"],
+      queryFn: ({ pageParam }) => favoritesApi.getFavorites(pageParam, PAGE_SIZE),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages) => (lastPage.hasNext ? allPages.length + 1 : undefined),
+    });
 
   const memories = useMemo(
     () => (data?.pages.flatMap((page) => page.contents) ?? []).map(toCardMemory),
@@ -34,7 +37,11 @@ export default function FavoritesPage() {
         <div className={styles.rollCount}>ROLL NO. {String(memories.length).padStart(3, "0")}</div>
       </div>
 
-      {isLoading ? null : isEmpty ? (
+      {isLoading ? (
+        <LoadingState label="즐겨찾기를 불러오는 중" />
+      ) : isError ? (
+        <ErrorState error={error} fallback="즐겨찾기를 불러오지 못했습니다" onRetry={() => void refetch()} />
+      ) : isEmpty ? (
         <EmptyState
           title="즐겨찾기한 기록이 없습니다"
           subtitle="기록 상세에서 하트를 눌러 모아보세요"

@@ -7,6 +7,8 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { CalendarPanel } from "@/components/memory/CalendarPanel";
 import { MemoryGrid } from "@/components/memory/MemoryGrid";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorState } from "@/components/feedback/ErrorState";
+import { LoadingState } from "@/components/feedback/LoadingState";
 import { PillButton } from "@/components/form/PillButton";
 
 import styles from "./page.module.css";
@@ -67,8 +69,16 @@ export default function HomePage() {
   // so it goes back to "loading" on every date click (no cache for a new date yet) —
   // gating the whole panel on it would unmount/remount the entire calendar grid each
   // click. Only the day-entries list inside CalendarPanel should react to dayQuery.
-  const isLoading = mode === "list" ? timelineQuery.isLoading : datesQuery.isLoading;
+  //
+  // The two modes drive the same body slot, so loading/error are read off whichever
+  // query the visible mode actually depends on.
+  const activeQuery = mode === "list" ? timelineQuery : datesQuery;
+  const isLoading = activeQuery.isLoading;
   const isEmpty = mode === "list" && !isLoading && listMemories.length === 0;
+  const retryActive = useCallback(() => {
+    if (mode === "list") void timelineQuery.refetch();
+    else void datesQuery.refetch();
+  }, [mode, timelineQuery, datesQuery]);
 
   const openDetail = useCallback((id: number) => router.push(`/entry/${id}`), [router]);
 
@@ -97,7 +107,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {isLoading ? null : isEmpty ? (
+      {isLoading ? (
+        <LoadingState label="기록을 불러오는 중" />
+      ) : activeQuery.isError ? (
+        <ErrorState error={activeQuery.error} fallback="기록을 불러오지 못했습니다" onRetry={retryActive} />
+      ) : isEmpty ? (
         <EmptyState
           title="아직 기록이 없습니다"
           subtitle="첫 번째 순간을 남겨보세요"

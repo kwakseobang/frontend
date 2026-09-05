@@ -4,6 +4,7 @@ import { WEEKDAYS, buildCalendarCells, formatDayLabel } from "@/lib/core";
 import type { Memory } from "@/lib/core";
 import { memo, useMemo } from "react";
 
+import { LoadingState } from "@/components/feedback/LoadingState";
 import { MemoryCard } from "./MemoryCard";
 import styles from "./CalendarPanel.module.css";
 
@@ -166,7 +167,9 @@ const DayEntries = memo(function DayEntries({ selectedDate, memories, isLoading,
         <div className={styles.entriesLabel}>{formatDayLabel(selectedDate + "T00:00")}</div>
         <div className={styles.hr} />
       </div>
-      {isLoading ? null : memories.length === 0 ? (
+      {isLoading ? (
+        <LoadingState variant="inline" label="이 날의 기록을 불러오는 중" />
+      ) : memories.length === 0 ? (
         <div className={styles.empty}>이 날의 기록이 없어요.</div>
       ) : (
         <div className={styles.grid}>

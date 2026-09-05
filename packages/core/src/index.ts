@@ -19,7 +19,7 @@ export {
   syncTokensFromPersistence,
 } from "./auth/tokenStore";
 
-export { ApiError, request } from "./api/client";
+export { ApiError, NetworkError, isRetryableError, request } from "./api/client";
 export * as authApi from "./api/auth";
 export * as favoritesApi from "./api/favorites";
 export * as membersApi from "./api/members";

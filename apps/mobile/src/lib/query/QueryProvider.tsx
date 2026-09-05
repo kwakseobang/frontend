@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { AppState, type AppStateStatus, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import { QueryClient, QueryClientProvider, focusManager, onlineManager } from "@tanstack/react-query";
+import { isRetryableError } from "@/lib/core";
+
+const MAX_RETRIES = 2;
 
 // React Query's defaults are written for a browser: there is no window "online" event and
 // no window focus in React Native, so both managers have to be fed from RN's own APIs.
@@ -28,6 +31,15 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             // Unlike the web, coming back to the app after a while is exactly when the
             // data is most likely stale, so this one is on here.
             refetchOnWindowFocus: true,
+            // Same policy as the web (apps/web/src/lib/query/QueryProvider.tsx): only
+            // transport failures and 5xx are worth repeating. Retrying a 404 three
+            // times just delays telling the user what happened.
+            retry: (failureCount, error) => failureCount < MAX_RETRIES && isRetryableError(error),
+            retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
+          },
+          mutations: {
+            // A write is not safe to replay blindly — a retried createMemory posts twice.
+            retry: false,
           },
         },
       }),
