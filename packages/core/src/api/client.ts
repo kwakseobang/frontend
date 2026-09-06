@@ -42,6 +42,12 @@ export class NetworkError extends Error {
 const REQUEST_TIMEOUT_MS = 8_000;
 /** Uploads move real bytes over a phone uplink, so they get a much longer leash. */
 const UPLOAD_TIMEOUT_MS = 60_000;
+/**
+ * Reissue gets a shorter leash than an ordinary request: it gates the entire app boot,
+ * so a user reopening after days away should hit the login screen quickly on failure
+ * rather than sit through the full request budget first.
+ */
+const REISSUE_TIMEOUT_MS = 5_000;
 
 interface RequestOptions {
   method?: string;
@@ -137,60 +143,46 @@ async function parseError(res: Response): Promise<ParsedError> {
 }
 
 /**
- * Why "fatal" is a separate axis from "ok": a failed reissue used to mean one thing —
- * log the user out. But a refresh token is good for 14 days, and most reissue failures
- * on a phone are not the token going bad, they are the request never landing. Ending a
- * valid session because the backend was briefly unreachable is what dropped the user on
- * /login after every app resume. Only the backend actually rejecting the token is fatal.
+ * Any reissue failure ends the session — including a timeout or a 5xx. A refresh token
+ * being merely inconvenient to redeem is indistinguishable from it being dead without
+ * waiting the backend out, and that wait is exactly what a user reopening the app after
+ * days away is not willing to sit through. Fail fast and let them log in again.
  */
-type ReissueResult =
-  | { ok: true; tokens: AuthTokens }
-  | { ok: false; fatal: true }
-  | { ok: false; fatal: false; cause: unknown };
+type ReissueResult = { ok: true; tokens: AuthTokens } | { ok: false; cause?: unknown };
 
 let reissuePromise: Promise<ReissueResult> | null = null;
 
 async function doReissue(): Promise<ReissueResult> {
   const tokens = getTokens();
   // No refresh token to spend — nothing to recover, and no request worth making.
-  if (!tokens) return { ok: false, fatal: true };
+  if (!tokens) return { ok: false };
 
   let res: Response;
   try {
     res = await rawRequest("/api/auth/reissue", {
       method: "POST",
       json: { refreshToken: tokens.refreshToken },
+      timeoutMs: REISSUE_TIMEOUT_MS,
     });
   } catch (cause) {
-    return { ok: false, fatal: false, cause };
+    return { ok: false, cause };
   }
 
   if (!res.ok) {
-    // 5xx — including the 502/504 a cold or restarting backend emits — is the server
-    // being unwell, not the session being over. Keep the tokens and let the caller
-    // retry. A 4xx is the backend's considered answer: this token is not acceptable.
-    if (res.status >= 500) {
-      const parsed = await parseError(res);
-      return {
-        ok: false,
-        fatal: false,
-        cause: new ApiError(res.status, parsed.message, parsed.code, parsed.data),
-      };
-    }
-    return { ok: false, fatal: true };
+    const parsed = await parseError(res);
+    return { ok: false, cause: new ApiError(res.status, parsed.message, parsed.code, parsed.data) };
   }
 
   try {
     const body = await res.json();
     const next = body?.data as AuthTokens | undefined;
-    // A truncated or unexpected body is a transport problem, not a rejected token.
     if (!next?.accessToken || !next?.refreshToken) {
-      return { ok: false, fatal: false, cause: new ApiError(res.status, "재발급 응답이 올바르지 않습니다") };
+      return { ok: false, cause: new ApiError(res.status, "재발급 응답이 올바르지 않습니다") };
     }
     setTokens(next);
     return { ok: true, tokens: next };
   } catch (cause) {
-    return { ok: false, fatal: false, cause };
+    return { ok: false, cause };
   }
 }
 
@@ -216,13 +208,6 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   if (res.status === 401 && auth && !explicitToken) {
     const result = await reissue();
     if (!result.ok) {
-      if (!result.fatal) {
-        // Session left intact on purpose: we never got an answer about whether it is
-        // still valid, so the caller retries rather than the user being logged out.
-        throw result.cause instanceof Error
-          ? result.cause
-          : new NetworkError("세션을 갱신하지 못했습니다", false, result.cause);
-      }
       clearTokens();
       // Where "logged out" goes is the host's call: the web does a hard navigation
       // (which also discards in-memory state like the React Query cache), the app

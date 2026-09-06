@@ -125,9 +125,9 @@ describe("401 recovery", () => {
     expect(results).toHaveLength(2);
   });
 
-  // The regression that dropped the user on /login every time they reopened the PWA:
-  // the refresh token was fine, the request just never landed.
-  it("keeps the session when the reissue request cannot reach the backend", async () => {
+  // Reissue fails fast and ends the session on any failure — a user reopening the app
+  // after days away should land on /login promptly rather than wait out a flaky backend.
+  it("ends the session when the reissue request cannot reach the backend", async () => {
     setTokens(tokens);
     const onSessionExpired = vi.fn();
     configure({ onSessionExpired });
@@ -140,12 +140,13 @@ describe("401 recovery", () => {
     );
 
     const err = await request("/api/memories").catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(NetworkError);
-    expect(onSessionExpired).not.toHaveBeenCalled();
-    expect(getTokens()).toEqual(tokens);
+    expect(err).toBeInstanceOf(ApiError);
+    expect((err as ApiError).status).toBe(401);
+    expect(onSessionExpired).toHaveBeenCalledOnce();
+    expect(getTokens()).toBeNull();
   });
 
-  it("keeps the session when the reissue endpoint answers 5xx", async () => {
+  it("ends the session when the reissue endpoint answers 5xx", async () => {
     setTokens(tokens);
     const onSessionExpired = vi.fn();
     configure({ onSessionExpired });
@@ -158,12 +159,12 @@ describe("401 recovery", () => {
 
     const err = await request("/api/memories").catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ApiError);
-    expect((err as ApiError).status).toBe(502);
-    expect(onSessionExpired).not.toHaveBeenCalled();
-    expect(getTokens()).toEqual(tokens);
+    expect((err as ApiError).status).toBe(401);
+    expect(onSessionExpired).toHaveBeenCalledOnce();
+    expect(getTokens()).toBeNull();
   });
 
-  it("ends the session only when the backend rejects the refresh token", async () => {
+  it("ends the session when the backend rejects the refresh token", async () => {
     setTokens(tokens);
     const onSessionExpired = vi.fn();
     configure({ onSessionExpired });
@@ -176,7 +177,7 @@ describe("401 recovery", () => {
     expect(getTokens()).toBeNull();
   });
 
-  it("treats a malformed reissue body as transport noise rather than a dead session", async () => {
+  it("ends the session on a malformed reissue body", async () => {
     setTokens(tokens);
     const onSessionExpired = vi.fn();
     configure({ onSessionExpired });
@@ -187,9 +188,34 @@ describe("401 recovery", () => {
       ),
     );
 
-    await expect(request("/api/memories")).rejects.toBeInstanceOf(ApiError);
-    expect(onSessionExpired).not.toHaveBeenCalled();
-    expect(getTokens()).toEqual(tokens);
+    const err = await request("/api/memories").catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect((err as ApiError).status).toBe(401);
+    expect(onSessionExpired).toHaveBeenCalledOnce();
+    expect(getTokens()).toBeNull();
+  });
+
+  it("times reissue out faster than an ordinary request so login is not delayed", async () => {
+    vi.useFakeTimers();
+    setTokens(tokens);
+    const onSessionExpired = vi.fn();
+    configure({ onSessionExpired });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string, init: RequestInit) => {
+        if (!url.includes("/api/auth/reissue")) return Promise.resolve(unauthorized());
+        return new Promise<Response>((_resolve, reject) => {
+          init.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
+        });
+      }),
+    );
+
+    const pending = request("/api/memories").catch((e: unknown) => e);
+    await vi.advanceTimersByTimeAsync(5_000);
+
+    const err = await pending;
+    expect(err).toBeInstanceOf(ApiError);
+    expect(onSessionExpired).toHaveBeenCalledOnce();
   });
 
   it("does not reissue for a request that carries an explicit token", async () => {
