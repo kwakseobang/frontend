@@ -25,12 +25,7 @@ export function EntryScreen({ id }: { id: string }) {
     queryFn: () => memoriesApi.getMemory(id),
   });
 
-  const favoriteIdsQuery = useQuery({
-    queryKey: ["favorites", "ids"],
-    queryFn: favoritesApi.getAllFavoriteIds,
-    enabled: Boolean(data?.isOwner),
-  });
-  const isFavorite = favoriteIdsQuery.data?.has(Number(id)) ?? false;
+  const isFavorite = data?.isFavorite ?? false;
 
   const deleteMutation = useMutation({
     mutationFn: () => memoriesApi.deleteMemory(id),
@@ -46,7 +41,8 @@ export function EntryScreen({ id }: { id: string }) {
   const favoriteMutation = useMutation({
     mutationFn: () => (isFavorite ? favoritesApi.removeFavorite(id) : favoritesApi.addFavorite(id)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["memories", id] });
+      queryClient.invalidateQueries({ queryKey: ["favorites", "list"] });
     },
     onError: (err) => {
       showToast(toErrorMessage(err, "즐겨찾기 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."));

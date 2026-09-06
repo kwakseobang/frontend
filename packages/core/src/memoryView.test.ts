@@ -44,6 +44,7 @@ describe("toDetailMemory", () => {
     imageUrls: ["https://storage.googleapis.com/bucket/media/a.jpg", "https://storage.googleapis.com/bucket/media/b.jpg"],
     isOwner: true,
     isDraft: false,
+    isFavorite: false,
   };
 
   it("passes every image URL through untouched", () => {

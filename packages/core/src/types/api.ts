@@ -31,6 +31,7 @@ export interface MemoryDetail {
   imageUrls: string[];
   isOwner: boolean;
   isDraft: boolean;
+  isFavorite: boolean;
 }
 
 export interface MemoryStatistics {
