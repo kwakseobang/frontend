@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MemoryDetail } from "@/components/memory/MemoryDetail";
 import { DeleteConfirmModal } from "@/components/feedback/DeleteConfirmModal";
 import { LoadingState } from "@/components/feedback/LoadingState";
-import { PillButton } from "@/components/form/PillButton";
+import { ErrorState } from "@/components/feedback/ErrorState";
 
 import { useToast } from "@/components/toast/ToastProvider";
 
@@ -64,15 +64,13 @@ export function EntryScreen({ id }: { id: string }) {
 
   if (isError || !data) {
     const notFound = error instanceof ApiError && (error.status === 404 || error.status === 403);
+    // A 404/403 will just 404/403 again — retrying is only offered for transient failures.
     return (
-      <div style={{ padding: 40, color: "var(--color-text-tertiary)" }}>
-        <p>{notFound ? "기록을 찾을 수 없습니다." : "기록을 불러오는 중 오류가 발생했습니다."}</p>
-        {!notFound && (
-          <PillButton variant="outline" onClick={() => refetch()} style={{ marginTop: 12 }}>
-            다시 시도
-          </PillButton>
-        )}
-      </div>
+      <ErrorState
+        error={error}
+        fallback={notFound ? "기록을 찾을 수 없습니다" : "기록을 불러오는 중 오류가 발생했습니다"}
+        onRetry={notFound ? undefined : () => refetch()}
+      />
     );
   }
 

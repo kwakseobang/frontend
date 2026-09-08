@@ -8,6 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AvatarUploadSlot } from "@/components/upload/AvatarUploadSlot";
 import { UnderlineInput } from "@/components/form/UnderlineInput";
 import { PillButton } from "@/components/form/PillButton";
+import { LoadingState } from "@/components/feedback/LoadingState";
+import { ErrorState } from "@/components/feedback/ErrorState";
 
 import { BackChevronIcon } from "@/components/icons/BackChevronIcon";
 import { useToast } from "@/components/toast/ToastProvider";
@@ -79,8 +81,17 @@ function EditProfileForm({ member }: { member: Member }) {
 }
 
 export default function EditProfilePage() {
-  const { data: member } = useQuery({ queryKey: ["member", "me"], queryFn: membersApi.getMe });
+  const {
+    data: member,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({ queryKey: ["member", "me"], queryFn: membersApi.getMe });
 
-  if (!member) return null;
+  if (isLoading) return <LoadingState label="프로필을 불러오는 중" />;
+  if (isError || !member) {
+    return <ErrorState error={error} fallback="프로필을 불러오지 못했습니다" onRetry={() => void refetch()} />;
+  }
   return <EditProfileForm key={member.id} member={member} />;
 }

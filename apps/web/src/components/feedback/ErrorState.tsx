@@ -8,7 +8,8 @@ interface ErrorStateProps {
   error: unknown;
   /** Shown when the error carries no message of its own. */
   fallback?: string;
-  onRetry: () => void;
+  /** Omit for an error with no sensible retry (e.g. a 404 — retrying would just 404 again). */
+  onRetry?: () => void;
 }
 
 /**
@@ -21,9 +22,11 @@ export function ErrorState({ error, fallback = "불러오지 못했습니다", o
     <div className={styles.wrap} role="alert">
       <div className={styles.title}>{fallback}</div>
       <div className={styles.detail}>{toErrorMessage(error, "잠시 후 다시 시도해주세요")}</div>
-      <PillButton variant="large" onClick={onRetry}>
-        다시 시도
-      </PillButton>
+      {onRetry && (
+        <PillButton variant="large" onClick={onRetry}>
+          다시 시도
+        </PillButton>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { membersApi, memoriesApi, toErrorMessage } from "@/lib/core";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorState } from "@/components/feedback/ErrorState";
 import { LoadingState } from "@/components/feedback/LoadingState";
@@ -9,12 +10,15 @@ import { AvatarUploadSlot } from "@/components/upload/AvatarUploadSlot";
 import { PillButton } from "@/components/form/PillButton";
 
 import { useToast } from "@/components/toast/ToastProvider";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 import styles from "./page.module.css";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const { logout } = useAuth();
   const {
     data: member,
     isLoading,
@@ -39,6 +43,11 @@ export default function ProfilePage() {
   if (isError || !member) {
     return <ErrorState error={error} fallback="프로필을 불러오지 못했습니다" onRetry={() => void refetch()} />;
   }
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   return (
     <div className={styles.wrap}>
@@ -90,6 +99,12 @@ export default function ProfilePage() {
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </Link>
+
+      {/* Desktop already has logout in the sidebar; the sidebar is hidden below 767px
+          (Sidebar.module.css) with no other affordance, so mobile needs its own. */}
+      <button className={styles.logoutButton} onClick={handleLogout}>
+        로그아웃
+      </button>
     </div>
   );
 }

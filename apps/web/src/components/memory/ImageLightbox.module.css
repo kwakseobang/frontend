@@ -1,0 +1,121 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-modal-scrim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 24px;
+  animation: fadeUp 0.2s ease both;
+}
+
+.dialog {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.closeButton {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-panel-3);
+  border: 1px solid var(--color-modal-border);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: var(--shadow-modal);
+  transition: background 0.18s ease;
+}
+
+.closeButton:hover {
+  background: var(--color-panel-2);
+}
+
+.navButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-panel-3);
+  border: 1px solid var(--color-modal-border);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-modal);
+  transition: background 0.18s ease;
+}
+
+.navButton:hover {
+  background: var(--color-panel-2);
+}
+
+.prevButton {
+  left: -8px;
+}
+
+.nextButton {
+  right: -8px;
+}
+
+.mirrored {
+  display: flex;
+  transform: scaleX(-1);
+}
+
+.counter {
+  position: absolute;
+  bottom: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  font: 12px var(--font-mono);
+  color: var(--color-text-quaternary);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  .closeButton,
+  .navButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .prevButton {
+    left: 4px;
+  }
+
+  .nextButton {
+    right: 4px;
+  }
+
+  .closeButton {
+    top: 4px;
+    right: 4px;
+  }
+
+  .counter {
+    bottom: 8px;
+  }
+}

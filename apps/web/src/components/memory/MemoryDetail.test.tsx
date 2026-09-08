@@ -135,4 +135,49 @@ describe("MemoryDetail", () => {
     await userEvent.click(screen.getByRole("button", { name: /목록으로/ }));
     expect(props.onBack).toHaveBeenCalledOnce();
   });
+
+  describe("image lightbox", () => {
+    it("opens on a filmstrip image click", async () => {
+      renderDetail();
+      await userEvent.click(screen.getByRole("button", { name: "1번째 사진 확대 보기" }));
+      expect(screen.getByRole("dialog", { name: "사진 확대 보기" })).toBeInTheDocument();
+    });
+
+    it("closes on Escape", async () => {
+      renderDetail();
+      await userEvent.click(screen.getByRole("button", { name: "1번째 사진 확대 보기" }));
+      await userEvent.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog", { name: "사진 확대 보기" })).not.toBeInTheDocument();
+    });
+
+    it("closes on a backdrop click", async () => {
+      renderDetail();
+      await userEvent.click(screen.getByRole("button", { name: "1번째 사진 확대 보기" }));
+      const dialog = screen.getByRole("dialog", { name: "사진 확대 보기" });
+      await userEvent.click(dialog.parentElement as HTMLElement);
+      expect(screen.queryByRole("dialog", { name: "사진 확대 보기" })).not.toBeInTheDocument();
+    });
+
+    it("hides nav arrows for a single image", async () => {
+      renderDetail();
+      await userEvent.click(screen.getByRole("button", { name: "1번째 사진 확대 보기" }));
+      expect(screen.queryByRole("button", { name: "다음 사진" })).not.toBeInTheDocument();
+    });
+
+    it("navigates between images with arrow keys when there are multiple", async () => {
+      renderDetail({
+        memory: {
+          ...memory,
+          images: [
+            "https://storage.googleapis.com/bucket/media/a.jpg",
+            "https://storage.googleapis.com/bucket/media/b.jpg",
+          ],
+        },
+      });
+      await userEvent.click(screen.getByRole("button", { name: "1번째 사진 확대 보기" }));
+      expect(screen.getByText("1 / 2")).toBeInTheDocument();
+      await userEvent.keyboard("{ArrowRight}");
+      expect(screen.getByText("2 / 2")).toBeInTheDocument();
+    });
+  });
 });

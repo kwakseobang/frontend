@@ -8,6 +8,7 @@ import Image from "next/image";
 import { PillButton } from "@/components/form/PillButton";
 import { BackChevronIcon } from "@/components/icons/BackChevronIcon";
 import { useToast } from "@/components/toast/ToastProvider";
+import { ImageLightbox } from "./ImageLightbox";
 import styles from "./MemoryDetail.module.css";
 
 interface MemoryDetailProps {
@@ -41,6 +42,7 @@ export function MemoryDetail({
 }: MemoryDetailProps) {
   const { showToast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const isPublic = memory.visibility === "PUBLIC";
   // A draft is hidden from everyone but its owner regardless of visibility (the
@@ -170,7 +172,13 @@ export function MemoryDetail({
       {memory.images.length > 0 && (
         <div className={[styles.filmstrip, "filmstrip"].join(" ")}>
           {memory.images.map((img, i) => (
-            <div key={i} className={styles.filmstripImage}>
+            <button
+              key={i}
+              type="button"
+              className={styles.filmstripImage}
+              onClick={() => setLightboxIndex(i)}
+              aria-label={`${i + 1}번째 사진 확대 보기`}
+            >
               <Image
                 src={img}
                 alt=""
@@ -179,10 +187,17 @@ export function MemoryDetail({
                 style={{ objectFit: "cover" }}
                 priority={i === 0}
               />
-            </div>
+            </button>
           ))}
         </div>
       )}
+
+      <ImageLightbox
+        images={memory.images}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
+      />
 
       <div className={styles.body}>
         <div className={styles.text}>{memory.text}</div>

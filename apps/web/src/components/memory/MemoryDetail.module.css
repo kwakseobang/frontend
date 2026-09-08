@@ -118,6 +118,15 @@
   overflow: hidden;
   scroll-snap-align: start;
   box-shadow: var(--shadow-print);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.filmstripImage:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }
 
 @media (max-width: 520px) {
